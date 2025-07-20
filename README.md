@@ -1,6 +1,6 @@
 # Gradient-Descent-Hyperparameter-Analysis
 
-## 경사하강법(Gradient Descent) 하이퍼파라미터가 수렴 속도에 미치는 영향 분석
+## 경사하강법(Gradient Descent) 하이퍼파라미터가 수렴 속도에 미치는 영향 분석(고등학교 3학년 인공지능 기초 교과목 심화탐구 프로젝트)
 
 ---
 
