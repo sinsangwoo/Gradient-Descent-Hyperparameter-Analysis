@@ -22,6 +22,17 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
+dependencies = [
+    "jax[cpu]>=0.4.20",
+    "jaxlib>=0.4.20",
+    "flax>=0.7.5",
+    "optax>=0.1.7",
+    "numpy>=1.24.0",
+    "scipy>=1.11.0",
+    "matplotlib>=3.7.0",
+    "plotly>=5.17.0",
+    "tqdm>=4.66.0",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -33,7 +44,26 @@ dev = [
     "mypy>=1.7.0",
     "isort>=5.13.0",
     "pre-commit>=3.5.0",
+    "sphinx>=7.2.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "nbsphinx>=0.9.3",
+    "ipykernel>=6.26.0",
 ]
+gpu = [
+    "jax[cuda12_pip]>=0.4.20",
+]
+all = [
+    "phio[dev,gpu]",
+]
+
+[project.urls]
+Homepage = "https://github.com/sinsangwoo/physics-informed-optimizer"
+Documentation = "https://phio.readthedocs.io"
+"Source Code" = "https://github.com/sinsangwoo/physics-informed-optimizer"
+"Bug Tracker" = "https://github.com/sinsangwoo/physics-informed-optimizer/issues"
+
+[project.scripts]
+phio = "phio.cli:main"
 
 [tool.black]
 line-length = 100
@@ -59,6 +89,7 @@ python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
+no_strict_optional = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
