@@ -53,9 +53,7 @@ class CausalWeightScheduler:
         # Precompute stage boundaries
         self.stage_times = jnp.linspace(t_min, t_max, num_stages + 1)
 
-    def get_temporal_weights(
-        self, t: jnp.ndarray, epoch: int
-    ) -> jnp.ndarray:
+    def get_temporal_weights(self, t: jnp.ndarray, epoch: int) -> jnp.ndarray:
         """Compute causal weights for time points.
 
         Args:

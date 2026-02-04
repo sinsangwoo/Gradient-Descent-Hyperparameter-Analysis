@@ -64,9 +64,7 @@ class AdaptiveLossBalancer:
         for key, grad in gradients.items():
             # Flatten gradient and compute norm
             flat_grad = jax.tree_util.tree_leaves(grad)
-            grad_norm = jnp.sqrt(
-                sum(jnp.sum(g**2) for g in flat_grad)
-            )
+            grad_norm = jnp.sqrt(sum(jnp.sum(g**2) for g in flat_grad))
             grad_norms[key] = float(grad_norm)
 
         # Target: All gradient norms should be equal
@@ -81,9 +79,7 @@ class AdaptiveLossBalancer:
                 self.weights[key] *= 1.0 + self.alpha * (ratio - 1.0)
 
                 # Clamp weights to reasonable range
-                self.weights[key] = float(
-                    jnp.clip(self.weights[key], 0.01, 100.0)
-                )
+                self.weights[key] = float(jnp.clip(self.weights[key], 0.01, 100.0))
 
         return self.weights
 
@@ -92,8 +88,8 @@ class NTKBalancer:
     """Neural Tangent Kernel based loss balancing.
 
     Uses NTK eigenvalue analysis to balance loss components.
-    Based on Wang et al. (2021) "Understanding and mitigating gradient
-    pathologies in PINNs".
+    Based on Wang et al. (2021) Understanding and mitigating gradient
+    pathologies in PINNs.
 
     Key insight: Loss components with larger NTK eigenvalues dominate
     training. Reweight to equalize influence.
