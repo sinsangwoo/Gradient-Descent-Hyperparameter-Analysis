@@ -1,9 +1,20 @@
-"""Physics problem definitions (PDEs)."""
+"""Physics problem definitions (PDEs).
 
-from phio.physics.heat import HeatEquation1D
-from phio.physics.wave import WaveEquation1D
+This module provides functional API for physics-informed neural networks.
+"""
+
+from phio.physics.heat import (
+    analytical_gaussian,
+    dirichlet_bc_loss,
+    heat_equation_residual,
+    initial_condition_loss,
+    steady_state_1d,
+)
 
 __all__ = [
-    "HeatEquation1D",
-    "WaveEquation1D",
+    "heat_equation_residual",
+    "analytical_gaussian",
+    "steady_state_1d",
+    "dirichlet_bc_loss",
+    "initial_condition_loss",
 ]
