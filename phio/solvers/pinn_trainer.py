@@ -42,7 +42,7 @@ def create_train_state(
 
     params = model.init(rng, x_sample, t_sample)
     tx = optax.adam(learning_rate)
-    
+
     return TrainState.create(
         apply_fn=model.apply,
         params=params,
@@ -144,6 +144,7 @@ def train_step(
         new_state: Updated training state
         loss_dict: Loss components
     """
+
     def loss_fn(params):
         return compute_pinn_loss(
             params,

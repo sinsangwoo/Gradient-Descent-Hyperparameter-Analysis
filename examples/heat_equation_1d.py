@@ -19,7 +19,7 @@ import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import numpy as np
 
-from phio.networks.mlp import MLP, FourierFeatureMLP
+from phio.networks.mlp import FourierFeatureMLP
 from phio.physics.heat import (
     analytical_gaussian,
     heat_equation_residual,
@@ -56,7 +56,7 @@ def generate_training_data(
         Dictionary with training data
     """
     rng_local = jax.random.PRNGKey(123)
-    
+
     # PDE collocation points (Latin Hypercube Sampling for better coverage)
     rng_local, rng_x, rng_t = jax.random.split(rng_local, 3)
     x_pde = jax.random.uniform(rng_x, (n_pde, 1), minval=x_range[0], maxval=x_range[1])
@@ -73,7 +73,9 @@ def generate_training_data(
     # Initial condition: Gaussian pulse
     x_ic_vals = np.linspace(x_range[0], x_range[1], n_ic)
     x_ic = jnp.array(x_ic_vals)
-    u_ic = analytical_gaussian(x_ic, jnp.zeros_like(x_ic), alpha=alpha, x0=0.5, sigma0=0.1)
+    u_ic = analytical_gaussian(
+        x_ic, jnp.zeros_like(x_ic), alpha=alpha, x0=0.5, sigma0=0.1
+    )
     u_ic = u_ic.squeeze()
 
     return {
@@ -107,9 +109,10 @@ def main():
 
     # Initialize model
     print("\n[2/5] Initializing PINN (Fourier Feature MLP)...")
-    # model = MLP(features=[64, 64, 64, 1])  # Standard MLP
-    model = FourierFeatureMLP(features=[128, 128, 128, 1], fourier_features=64, sigma=5.0)
-    
+    model = FourierFeatureMLP(
+        features=[128, 128, 128, 1], fourier_features=64, sigma=5.0
+    )
+
     state = create_train_state(
         rng,
         model,
@@ -117,14 +120,16 @@ def main():
         sample_input=(data["x_pde"][:1], data["t_pde"][:1]),
     )
     print(f"  - Network: {model}")
-    print(f"  - Parameters: {sum(x.size for x in jax.tree_util.tree_leaves(state.params))}")
+    print(
+        f"  - Parameters: {sum(x.size for x in jax.tree_util.tree_leaves(state.params))}"
+    )
 
     # Curriculum learning schedule
     print("\n[3/5] Training with curriculum learning...")
     curriculum = {
-        0: {"ic": 100.0, "bc": 10.0, "pde": 1.0},      # Phase 1: Learn IC first
-        2000: {"ic": 10.0, "bc": 10.0, "pde": 1.0},     # Phase 2: Balance IC/BC
-        5000: {"ic": 1.0, "bc": 1.0, "pde": 1.0},       # Phase 3: Equal weights
+        0: {"ic": 100.0, "bc": 10.0, "pde": 1.0},  # Phase 1: Learn IC first
+        2000: {"ic": 10.0, "bc": 10.0, "pde": 1.0},  # Phase 2: Balance IC/BC
+        5000: {"ic": 1.0, "bc": 1.0, "pde": 1.0},  # Phase 3: Equal weights
     }
 
     start_time = time.time()
@@ -144,7 +149,10 @@ def main():
         curriculum_schedule=curriculum,
     )
     train_time = time.time() - start_time
-    print(f"\n  Training completed in {train_time:.2f}s ({train_time/num_epochs*1000:.2f}ms/epoch)")
+    print(
+        f"\n  Training completed in {train_time:.2f}s "
+        f"({train_time/num_epochs*1000:.2f}ms/epoch)"
+    )
 
     # Evaluate on test grid
     print("\n[4/5] Evaluating on test grid...")
@@ -154,9 +162,9 @@ def main():
     X_test, T_test = jnp.meshgrid(x_test, t_test)
 
     # PINN prediction
-    u_pred = jax.vmap(jax.vmap(state.apply_fn, in_axes=(None, 0, None)), in_axes=(None, None, 0))(
-        state.params, X_test, T_test
-    ).squeeze()
+    u_pred = jax.vmap(
+        jax.vmap(state.apply_fn, in_axes=(None, 0, None)), in_axes=(None, None, 0)
+    )(state.params, X_test, T_test).squeeze()
 
     # Analytical solution
     u_true = analytical_gaussian(x_test, t_test, alpha=alpha, x0=0.5, sigma0=0.1)
@@ -164,14 +172,16 @@ def main():
     # Compute error
     l2_error = jnp.linalg.norm(u_pred - u_true) / jnp.linalg.norm(u_true)
     max_error = jnp.max(jnp.abs(u_pred - u_true))
-    
+
     print(f"  - L2 relative error: {l2_error:.6f}")
     print(f"  - Max absolute error: {max_error:.6f}")
 
     # Visualize results
     print("\n[5/5] Generating visualizations...")
     fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    fig.suptitle("PhIO: 1D Heat Equation Results", fontsize=16, fontweight='bold')
+    fig.suptitle(
+        "PhIO: 1D Heat Equation Results", fontsize=16, fontweight="bold"
+    )
 
     # Loss curves
     ax = axes[0, 0]
@@ -214,8 +224,16 @@ def main():
     ax = axes[1, 1]
     for t_snap in [0.0, 0.25, 0.5, 0.75, 1.0]:
         idx = int(t_snap * (nt - 1))
-        ax.plot(x_test, u_pred[idx, :], label=f"PINN (t={t_snap:.2f})", linestyle="-")
-        ax.plot(x_test, u_true[idx, :], label=f"True (t={t_snap:.2f})", linestyle="--", alpha=0.6)
+        ax.plot(
+            x_test, u_pred[idx, :], label=f"PINN (t={t_snap:.2f})", linestyle="-"
+        )
+        ax.plot(
+            x_test,
+            u_true[idx, :],
+            label=f"True (t={t_snap:.2f})",
+            linestyle="--",
+            alpha=0.6,
+        )
     ax.set_xlabel("x")
     ax.set_ylabel("u(x, t)")
     ax.set_title("Temperature Profiles")
@@ -228,41 +246,48 @@ def main():
     summary_text = f"""
     Performance Summary
     {'='*40}
-    
+
     Training:
       • Epochs: {num_epochs:,}
       • Time: {train_time:.2f}s
       • Speed: {train_time/num_epochs*1000:.2f}ms/epoch
-    
+
     Accuracy:
       • L2 Error: {l2_error:.6f}
       • Max Error: {max_error:.6f}
-    
+
     Model:
       • Type: Fourier MLP
       • Parameters: {sum(x.size for x in jax.tree_util.tree_leaves(state.params)):,}
-    
+
     Physics:
       • PDE: ∂u/∂t = α ∂²u/∂x²
       • α: {alpha}
       • Domain: x∈[0,1], t∈[0,1]
     """
-    ax.text(0.1, 0.5, summary_text, fontsize=10, family="monospace", verticalalignment="center")
+    ax.text(
+        0.1,
+        0.5,
+        summary_text,
+        fontsize=10,
+        family="monospace",
+        verticalalignment="center",
+    )
 
     plt.tight_layout()
-    
+
     # Save figure
     output_dir = Path("outputs")
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "heat_equation_results.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight")
     print(f"\n  Results saved to: {output_path}")
-    
+
     plt.show()
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("SUCCESS! PhIO solved 1D heat equation with high accuracy.")
-    print("="*70)
+    print("=" * 70)
 
 
 if __name__ == "__main__":

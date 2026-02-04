@@ -1,15 +1,24 @@
 """Setup configuration for PhIO (Physics-Informed Optimizer)."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
+# Read requirements, filtering out comments and -r directives
+def read_requirements(filename):
+    with open(filename, "r", encoding="utf-8") as fh:
+        return [
+            line.strip()
+            for line in fh
+            if line.strip()
+            and not line.startswith("#")
+            and not line.startswith("-r")
+        ]
+
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r", encoding="utf-8") as fh:
-    requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
-
-with open("requirements-dev.txt", "r", encoding="utf-8") as fh:
-    dev_requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+requirements = read_requirements("requirements.txt")
+dev_requirements = read_requirements("requirements-dev.txt")
 
 setup(
     name="phio",
@@ -36,6 +45,8 @@ setup(
     install_requires=requirements,
     extras_require={
         "dev": dev_requirements,
+        "gpu": ["jax[cuda12_pip]>=0.4.20"],
+        "all": dev_requirements + ["jax[cuda12_pip]>=0.4.20"],
     },
     entry_points={
         "console_scripts": [
