@@ -81,7 +81,7 @@ class FourierFeatureMLP(nn.Module):
     """MLP with Fourier feature encoding for better high-frequency learning.
 
     References:
-        Tancik et al. (2020) "Fourier Features Let Networks Learn High Frequency Functions"
+        Tancik et al. (2020) Fourier Features Let Networks Learn High Frequency Functions
     """
 
     features: Sequence[int] = (64, 64, 64, 1)
@@ -92,9 +92,9 @@ class FourierFeatureMLP(nn.Module):
     def setup(self):
         # Random Fourier features matrix (fixed after initialization)
         self.B = self.param(
-            'fourier_matrix',
+            "fourier_matrix",
             lambda rng, shape: jax.random.normal(rng, shape) * self.sigma,
-            (2, self.fourier_features)  # 2 = spatial_dim + time_dim
+            (2, self.fourier_features),  # 2 = spatial_dim + time_dim
         )
 
     @nn.compact
@@ -104,7 +104,9 @@ class FourierFeatureMLP(nn.Module):
 
         # Fourier feature encoding: [sin(2π B^T x), cos(2π B^T x)]
         projected = 2 * jnp.pi * jnp.dot(inputs, self.B)
-        fourier_features = jnp.concatenate([jnp.sin(projected), jnp.cos(projected)], axis=-1)
+        fourier_features = jnp.concatenate(
+            [jnp.sin(projected), jnp.cos(projected)], axis=-1
+        )
 
         # Standard MLP on Fourier features
         z = fourier_features
