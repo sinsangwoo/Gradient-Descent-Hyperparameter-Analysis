@@ -121,7 +121,6 @@ def compute_pinn_loss(
     return total_loss, loss_dict
 
 
-@jax.jit
 def train_step(
     state: TrainState,
     x_pde: jnp.ndarray,
@@ -135,6 +134,9 @@ def train_step(
     alpha: float = 0.01,
 ) -> Tuple[TrainState, Dict[str, jnp.ndarray]]:
     """Single training step.
+
+    Note: NOT @jax.jit decorated because pde_residual_fn is a non-array argument.
+    JAX cannot JIT compile functions with function arguments.
 
     Args:
         state: Current training state
