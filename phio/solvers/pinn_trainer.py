@@ -85,14 +85,14 @@ def compute_pinn_loss(
         total_loss: Weighted sum of losses
         loss_dict: Individual loss components
     """
-    # PDE residual loss
-    residual = pde_residual_fn(
-        lambda p, x, t: apply_fn(p, x[None, :], t[None, :])[0],
-        params,
-        x_pde,
-        t_pde,
-        alpha=alpha,
-    )
+    # PDE residual loss - properly vectorize over all collocation points
+    def predict_single(x, t):
+        return apply_fn(params, x[None, :], t[None, :])[0]
+
+    # Vectorize residual computation
+    residual = jax.vmap(
+        lambda x, t: pde_residual_fn(predict_single, params, x, t, alpha=alpha)
+    )(x_pde, t_pde)
     loss_pde = jnp.mean(residual**2)
 
     # Boundary condition loss
@@ -121,6 +121,54 @@ def compute_pinn_loss(
     return total_loss, loss_dict
 
 
+@jax.jit
+def train_step_jitted(
+    params: dict,
+    apply_fn: Callable,
+    opt_state: optax.OptState,
+    tx: optax.GradientTransformation,
+    x_pde: jnp.ndarray,
+    t_pde: jnp.ndarray,
+    x_bc: jnp.ndarray,
+    t_bc: jnp.ndarray,
+    u_bc: jnp.ndarray,
+    x_ic: jnp.ndarray,
+    u_ic: jnp.ndarray,
+    alpha: float,
+    pde_weight: float,
+    bc_weight: float,
+    ic_weight: float,
+) -> Tuple[dict, optax.OptState, Dict[str, jnp.ndarray]]:
+    """JIT-compiled training step (no function arguments)."""
+
+    def loss_fn(p):
+        # Use heat_equation_residual directly without passing it as argument
+        from phio.physics.heat import heat_equation_residual
+
+        return compute_pinn_loss(
+            p,
+            apply_fn,
+            x_pde,
+            t_pde,
+            x_bc,
+            t_bc,
+            u_bc,
+            x_ic,
+            u_ic,
+            heat_equation_residual,
+            alpha=alpha,
+            pde_weight=pde_weight,
+            bc_weight=bc_weight,
+            ic_weight=ic_weight,
+        )
+
+    (loss, loss_dict), grads = jax.value_and_grad(loss_fn, has_aux=True)(params)
+    updates, new_opt_state = tx.update(grads, opt_state, params)
+    new_params = optax.apply_updates(params, updates)
+
+    return new_params, new_opt_state, loss_dict
+
+
 def train_step(
     state: TrainState,
     x_pde: jnp.ndarray,
@@ -135,9 +183,6 @@ def train_step(
 ) -> Tuple[TrainState, Dict[str, jnp.ndarray]]:
     """Single training step.
 
-    Note: NOT @jax.jit decorated because pde_residual_fn is a non-array argument.
-    JAX cannot JIT compile functions with function arguments.
-
     Args:
         state: Current training state
         (other args): Training data
@@ -146,28 +191,25 @@ def train_step(
         new_state: Updated training state
         loss_dict: Loss components
     """
+    new_params, new_opt_state, loss_dict = train_step_jitted(
+        state.params,
+        state.apply_fn,
+        state.opt_state,
+        state.tx,
+        x_pde,
+        t_pde,
+        x_bc,
+        t_bc,
+        u_bc,
+        x_ic,
+        u_ic,
+        alpha,
+        state.pde_weight,
+        state.bc_weight,
+        state.ic_weight,
+    )
 
-    def loss_fn(params):
-        return compute_pinn_loss(
-            params,
-            state.apply_fn,
-            x_pde,
-            t_pde,
-            x_bc,
-            t_bc,
-            u_bc,
-            x_ic,
-            u_ic,
-            pde_residual_fn,
-            alpha=alpha,
-            pde_weight=state.pde_weight,
-            bc_weight=state.bc_weight,
-            ic_weight=state.ic_weight,
-        )
-
-    (loss, loss_dict), grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
-    new_state = state.apply_gradients(grads=grads)
-
+    new_state = state.replace(params=new_params, opt_state=new_opt_state)
     return new_state, loss_dict
 
 
