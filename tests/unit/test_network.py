@@ -19,11 +19,11 @@ class TestMLP:
     def test_forward_pass_shape(self, rng):
         """Test forward pass produces correct output shape."""
         net = MLP(hidden_dims=[32, 32], output_dim=1)
-        
+
         # Initialize
         x = random.normal(rng, (10, 2))  # Batch of 10, input dim 2
         params = net.init(rng, x)
-        
+
         # Forward pass
         y = net.apply(params, x)
         assert y.shape == (10, 1)
@@ -32,7 +32,7 @@ class TestMLP:
         """Test different activation functions."""
         activations = ["tanh", "relu", "gelu", "swish"]
         x = random.normal(rng, (5, 2))
-        
+
         for act in activations:
             net = MLP(hidden_dims=[16], output_dim=1, activation=act)
             params = net.init(rng, x)
@@ -43,7 +43,7 @@ class TestMLP:
         """Test error raised for invalid activation."""
         net = MLP(hidden_dims=[16], output_dim=1, activation="invalid")
         x = random.normal(rng, (5, 2))
-        
+
         with pytest.raises(ValueError, match="Unknown activation"):
             params = net.init(rng, x)
 
@@ -52,14 +52,14 @@ class TestMLP:
         net = MLP(hidden_dims=[32], output_dim=1)
         x = random.normal(rng, (10, 2))
         params = net.init(rng, x)
-        
+
         def loss_fn(params):
             y = net.apply(params, x)
             return jnp.mean(y**2)
-        
+
         # Compute gradients
         grads = jax.grad(loss_fn)(params)
-        
+
         # Check gradients exist for all parameters
         assert grads is not None
         for leaf in jax.tree_util.tree_leaves(grads):

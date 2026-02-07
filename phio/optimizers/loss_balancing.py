@@ -163,8 +163,7 @@ class NTKBalancer:
         # Update eigenvalue estimates with EMA
         for key, eig in ntk_eigenvalues.items():
             self.ntk_eigenvalues[key] = (
-                self.ema_decay * self.ntk_eigenvalues[key]
-                + (1 - self.ema_decay) * eig
+                self.ema_decay * self.ntk_eigenvalues[key] + (1 - self.ema_decay) * eig
             )
 
         # Target: Equalize effective NTK influence
@@ -175,9 +174,7 @@ class NTKBalancer:
         for key in self.weights.keys():
             if self.ntk_eigenvalues[key] > 0:
                 # Inverse weighting: larger eigenvalue → smaller weight
-                self.weights[key] = float(
-                    mean_eig / (self.ntk_eigenvalues[key] + 1e-8)
-                )
+                self.weights[key] = float(mean_eig / (self.ntk_eigenvalues[key] + 1e-8))
 
         # Normalize weights
         total_weight = sum(self.weights.values())

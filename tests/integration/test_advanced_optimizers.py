@@ -58,7 +58,9 @@ class TestCausalTraining:
 
         # Test weight computation - fix shape mismatch
         weights = scheduler.get_temporal_weights(data["t_pde"].flatten(), epoch=0)
-        assert weights.shape == (data["t_pde"].shape[0],)  # Changed from data["t_pde"].shape
+        assert weights.shape == (
+            data["t_pde"].shape[0],
+        )  # Changed from data["t_pde"].shape
         assert jnp.all((weights >= 0) & (weights <= 1))
 
         # Check stage progression

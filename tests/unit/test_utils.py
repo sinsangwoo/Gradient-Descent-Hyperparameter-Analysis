@@ -27,10 +27,10 @@ class TestMetrics:
         u_pred = jnp.ones((10, 10))
         u_exact = jnp.ones((10, 10)) * 1.1
         metrics = compute_metrics(u_pred, u_exact)
-        
+
         expected_keys = {"l2_relative", "l2_absolute", "max_error", "mean_error"}
         assert set(metrics.keys()) == expected_keys
-        
+
         # All metrics should be positive
         for value in metrics.values():
             assert value >= 0.0

@@ -86,9 +86,7 @@ class InverseProblemSolver:
             return state.apply_fn(params_inner, x[None, :], t[None, :])[0]
 
         residual = jax.vmap(
-            lambda x, t: self.pde_residual_fn(
-                predict_single, params, x, t, alpha=alpha
-            )
+            lambda x, t: self.pde_residual_fn(predict_single, params, x, t, alpha=alpha)
         )(x_pde, t_pde)
         loss_pde = jnp.mean(residual**2)
 

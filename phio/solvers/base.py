@@ -146,7 +146,9 @@ class PINNSolver:
         self.loss_history = []
 
         logger.info(f"Starting training for {num_epochs} epochs...")
-        logger.info(f"Collocation points: {n_collocation}, Boundary: {n_boundary}, Initial: {n_initial}")
+        logger.info(
+            f"Collocation points: {n_collocation}, Boundary: {n_boundary}, Initial: {n_initial}"
+        )
 
         for epoch in range(num_epochs):
             # Generate training points

@@ -179,9 +179,7 @@ def main():
     # Visualize results
     print("\n[5/5] Generating visualizations...")
     fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    fig.suptitle(
-        "PhIO: 1D Heat Equation Results", fontsize=16, fontweight="bold"
-    )
+    fig.suptitle("PhIO: 1D Heat Equation Results", fontsize=16, fontweight="bold")
 
     # Loss curves
     ax = axes[0, 0]
@@ -224,9 +222,7 @@ def main():
     ax = axes[1, 1]
     for t_snap in [0.0, 0.25, 0.5, 0.75, 1.0]:
         idx = int(t_snap * (nt - 1))
-        ax.plot(
-            x_test, u_pred[idx, :], label=f"PINN (t={t_snap:.2f})", linestyle="-"
-        )
+        ax.plot(x_test, u_pred[idx, :], label=f"PINN (t={t_snap:.2f})", linestyle="-")
         ax.plot(
             x_test,
             u_true[idx, :],

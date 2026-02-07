@@ -86,6 +86,7 @@ def compute_pinn_loss(
         total_loss: Weighted sum of losses
         loss_dict: Individual loss components
     """
+
     # PDE residual loss - properly vectorize over all collocation points
     def predict_single(params_inner, x, t):
         return apply_fn(params_inner, x[None, :], t[None, :])[0]

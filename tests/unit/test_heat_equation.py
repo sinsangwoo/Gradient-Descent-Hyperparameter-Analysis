@@ -29,7 +29,7 @@ class TestAnalyticalSolutions:
         x0, sigma0 = 0.5, 0.1
 
         u = analytical_gaussian(x, t, x0=x0, sigma0=sigma0)
-        expected = jnp.exp(-(x - x0) ** 2 / (2 * sigma0**2))
+        expected = jnp.exp(-((x - x0) ** 2) / (2 * sigma0**2))
 
         assert jnp.allclose(u[0, :], expected, atol=1e-6)
 
