@@ -1,5 +1,6 @@
 """PINN training loop with curriculum learning and adaptive weighting."""
 
+from functools import partial
 from typing import Callable, Dict, Optional, Tuple
 
 import jax
@@ -121,7 +122,7 @@ def compute_pinn_loss(
     return total_loss, loss_dict
 
 
-@jax.jit(static_argnames=["apply_fn", "tx"])
+@partial(jax.jit, static_argnames=["apply_fn", "tx"])
 def train_step_jitted(
     params: dict,
     apply_fn: Callable,
