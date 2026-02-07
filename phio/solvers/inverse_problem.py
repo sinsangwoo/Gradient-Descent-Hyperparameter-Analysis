@@ -82,8 +82,8 @@ class InverseProblemSolver:
         loss_data = jnp.mean((u_pred_meas - u_meas) ** 2)
 
         # 2. PDE residual loss
-        def predict_single(x, t):
-            return state.apply_fn(params, x[None, :], t[None, :])[0]
+        def predict_single(params_inner, x, t):
+            return state.apply_fn(params_inner, x[None, :], t[None, :])[0]
 
         residual = jax.vmap(
             lambda x, t: self.pde_residual_fn(
@@ -106,9 +106,7 @@ class InverseProblemSolver:
         loss_ic = jnp.mean((u_ic_pred - u_ic) ** 2)
 
         # Total loss
-        total_loss = (
-            data_weight * loss_data + loss_pde + loss_bc + loss_ic
-        )
+        total_loss = data_weight * loss_data + loss_pde + loss_bc + loss_ic
 
         loss_dict = {
             "total": total_loss,
@@ -163,9 +161,9 @@ class InverseProblemSolver:
             )
 
         # Compute gradients w.r.t. both NN params and physical params
-        (loss, loss_dict), grads = jax.value_and_grad(
-            loss_fn, has_aux=True
-        )((state.params, physical_params))
+        (loss, loss_dict), grads = jax.value_and_grad(loss_fn, has_aux=True)(
+            (state.params, physical_params)
+        )
 
         # Update NN parameters
         grad_nn, grad_physics = grads
@@ -248,8 +246,10 @@ class InverseProblemSolver:
 
         # Initialize state and parameters
         state = create_train_state(
-            rng, self.model, learning_rate=1e-3,
-            sample_input=(x_pde[:1, None], t_pde[:1, None])
+            rng,
+            self.model,
+            learning_rate=1e-3,
+            sample_input=(x_pde[:1, None], t_pde[:1, None]),
         )
         physical_params = {
             key: jnp.array(val) for key, val in initial_param_guess.items()
@@ -294,9 +294,7 @@ class InverseProblemSolver:
                 )
 
         # Final results
-        estimated_params = {
-            key: float(val) for key, val in physical_params.items()
-        }
+        estimated_params = {key: float(val) for key, val in physical_params.items()}
 
         print("\n" + "=" * 60)
         print("ESTIMATION RESULTS")
