@@ -256,7 +256,11 @@ class MultiFidelitySolver:
         mae = jnp.mean(jnp.abs(u_pred - u_true))
         rel_error = jnp.linalg.norm(u_pred - u_true) / jnp.linalg.norm(u_true)
 
-        return {"mse": float(mse), "mae": float(mae), "relative_error": float(rel_error)}
+        return {
+            "mse": float(mse),
+            "mae": float(mae),
+            "relative_error": float(rel_error),
+        }
 
     def multifidelity_pipeline(
         self,
@@ -280,7 +284,9 @@ class MultiFidelitySolver:
 
         # Stage 1: Low-fidelity training
         print("\n[Stage 1] Low-Fidelity Training (Coarse Grid)")
-        low_state, low_history, low_time = self.train_low_fidelity(rng, initial_condition)
+        low_state, low_history, low_time = self.train_low_fidelity(
+            rng, initial_condition
+        )
         low_accuracy = self.compute_accuracy(low_state, analytical_solution)
 
         print(f"\nLow-Fidelity Accuracy:")
@@ -322,9 +328,7 @@ class MultiFidelitySolver:
             / low_accuracy["relative_error"]
             * 100
         )
-        print(
-            f"\nError reduction from low to high fidelity: {error_reduction:.2f}%"
-        )
+        print(f"\nError reduction from low to high fidelity: {error_reduction:.2f}%")
 
         return {
             "low_fidelity": {

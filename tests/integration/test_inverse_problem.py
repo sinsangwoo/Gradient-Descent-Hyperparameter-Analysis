@@ -71,8 +71,10 @@ class TestInverseProblem:
 
         # Initialize state
         state = create_train_state(
-            rng, model, learning_rate=1e-3,
-            sample_input=(jnp.ones((1, 1)), jnp.zeros((1, 1)))
+            rng,
+            model,
+            learning_rate=1e-3,
+            sample_input=(jnp.ones((1, 1)), jnp.zeros((1, 1))),
         )
 
         # Mock physical parameters

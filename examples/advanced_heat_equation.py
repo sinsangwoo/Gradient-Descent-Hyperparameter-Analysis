@@ -120,13 +120,10 @@ def main():
     u_true = analytical_gaussian(x_test, t_test, alpha=alpha)
 
     # Baseline prediction
-    u_baseline = (
-        jax.vmap(
-            jax.vmap(state_baseline.apply_fn, in_axes=(None, 0, None)),
-            in_axes=(None, None, 0),
-        )(state_baseline.params, X, T)
-        .squeeze()
-    )
+    u_baseline = jax.vmap(
+        jax.vmap(state_baseline.apply_fn, in_axes=(None, 0, None)),
+        in_axes=(None, None, 0),
+    )(state_baseline.params, X, T).squeeze()
 
     l2_baseline = jnp.linalg.norm(u_baseline - u_true) / jnp.linalg.norm(u_true)
 

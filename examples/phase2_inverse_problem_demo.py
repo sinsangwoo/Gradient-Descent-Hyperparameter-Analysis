@@ -41,7 +41,9 @@ def generate_measurements(rng, true_alpha=0.01, n_measurements=30, noise_level=0
     x_meas = jax.random.uniform(rng, shape=(n_measurements,), minval=0.1, maxval=0.9)
     t_meas = jax.random.uniform(rng, shape=(n_measurements,), minval=0.1, maxval=0.5)
 
-    u_true = jax.vmap(lambda x, t: analytical_solution(x, t, true_alpha))(x_meas, t_meas)
+    u_true = jax.vmap(lambda x, t: analytical_solution(x, t, true_alpha))(
+        x_meas, t_meas
+    )
 
     rng, noise_rng = jax.random.split(rng)
     noise = jax.random.normal(noise_rng, shape=u_true.shape) * noise_level
@@ -69,7 +71,13 @@ def plot_results(x_meas, t_meas, u_meas, u_true, history, true_alpha):
     # Plot 2: Parameter estimation convergence
     ax = axes[0, 1]
     ax.plot(history["alpha"], linewidth=2, label="Estimated α")
-    ax.axhline(y=true_alpha, color="r", linestyle="--", linewidth=2, label=f"True α = {true_alpha}")
+    ax.axhline(
+        y=true_alpha,
+        color="r",
+        linestyle="--",
+        linewidth=2,
+        label=f"True α = {true_alpha}",
+    )
     ax.set_xlabel("Epoch")
     ax.set_ylabel("α (Thermal Conductivity)")
     ax.set_title("Parameter Estimation Convergence")
@@ -78,7 +86,9 @@ def plot_results(x_meas, t_meas, u_meas, u_true, history, true_alpha):
 
     # Plot 3: Measurement locations
     ax = axes[1, 0]
-    scatter = ax.scatter(x_meas, t_meas, c=u_meas, s=100, cmap="viridis", edgecolor="black")
+    scatter = ax.scatter(
+        x_meas, t_meas, c=u_meas, s=100, cmap="viridis", edgecolor="black"
+    )
     ax.set_xlabel("Space (x)")
     ax.set_ylabel("Time (t)")
     ax.set_title(f"Measurement Locations (n={len(u_meas)})")
@@ -116,7 +126,10 @@ def main():
     # Generate synthetic measurements
     rng = jax.random.PRNGKey(42)
     x_meas, t_meas, u_meas, u_true = generate_measurements(
-        rng, true_alpha=TRUE_ALPHA, n_measurements=N_MEASUREMENTS, noise_level=NOISE_LEVEL
+        rng,
+        true_alpha=TRUE_ALPHA,
+        n_measurements=N_MEASUREMENTS,
+        noise_level=NOISE_LEVEL,
     )
 
     print(f"\n🔬 Experimental Setup:")

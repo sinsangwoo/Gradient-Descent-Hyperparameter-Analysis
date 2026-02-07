@@ -2,15 +2,14 @@
 
 from setuptools import find_packages, setup
 
+
 # Read requirements, filtering out comments and -r directives
 def read_requirements(filename):
     with open(filename, "r", encoding="utf-8") as fh:
         return [
             line.strip()
             for line in fh
-            if line.strip()
-            and not line.startswith("#")
-            and not line.startswith("-r")
+            if line.strip() and not line.startswith("#") and not line.startswith("-r")
         ]
 
 

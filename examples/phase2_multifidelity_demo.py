@@ -53,7 +53,10 @@ def plot_results(results: dict):
 
     ax.plot(low_history["total"], label="Low-Fidelity", linewidth=2)
     ax.plot(
-        range(len(low_history["total"]), len(low_history["total"]) + len(high_history["total"])),
+        range(
+            len(low_history["total"]),
+            len(low_history["total"]) + len(high_history["total"]),
+        ),
         high_history["total"],
         label="High-Fidelity",
         linewidth=2,
@@ -100,8 +103,24 @@ def plot_results(results: dict):
         1 - results["high_fidelity"]["accuracy"]["relative_error"],
     ]
 
-    ax.scatter(times[0], accuracies[0], s=200, c="orange", marker="o", label="Low-Fidelity", edgecolor="black")
-    ax.scatter(times[1], accuracies[1], s=200, c="green", marker="s", label="Multi-Fidelity", edgecolor="black")
+    ax.scatter(
+        times[0],
+        accuracies[0],
+        s=200,
+        c="orange",
+        marker="o",
+        label="Low-Fidelity",
+        edgecolor="black",
+    )
+    ax.scatter(
+        times[1],
+        accuracies[1],
+        s=200,
+        c="green",
+        marker="s",
+        label="Multi-Fidelity",
+        edgecolor="black",
+    )
     ax.plot(times, accuracies, "k--", alpha=0.3, linewidth=1)
 
     ax.set_xlabel("Training Time (s)")
@@ -170,10 +189,14 @@ def main():
     print("\n" + "=" * 70)
     print("SUMMARY")
     print("=" * 70)
-    print(f"Low-Fidelity:  {results['low_fidelity']['time']:.2f}s, "
-          f"Error: {results['low_fidelity']['accuracy']['relative_error']:.6f}")
-    print(f"High-Fidelity: {results['high_fidelity']['time']:.2f}s, "
-          f"Error: {results['high_fidelity']['accuracy']['relative_error']:.6f}")
+    print(
+        f"Low-Fidelity:  {results['low_fidelity']['time']:.2f}s, "
+        f"Error: {results['low_fidelity']['accuracy']['relative_error']:.6f}"
+    )
+    print(
+        f"High-Fidelity: {results['high_fidelity']['time']:.2f}s, "
+        f"Error: {results['high_fidelity']['accuracy']['relative_error']:.6f}"
+    )
     print(f"Total Time: {results['total_time']:.2f}s")
     print(f"Error Reduction: {results['error_reduction_percent']:.2f}%")
     print(f"Cost Function (Accuracy/sec): {results['cost_function']:.6f}")

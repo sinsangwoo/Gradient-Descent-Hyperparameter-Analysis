@@ -1,5 +1,6 @@
 """PINN training loop with curriculum learning and adaptive weighting."""
 
+from functools import partial
 from typing import Callable, Dict, Optional, Tuple
 
 import jax
@@ -85,9 +86,10 @@ def compute_pinn_loss(
         total_loss: Weighted sum of losses
         loss_dict: Individual loss components
     """
+
     # PDE residual loss - properly vectorize over all collocation points
-    def predict_single(x, t):
-        return apply_fn(params, x[None, :], t[None, :])[0]
+    def predict_single(params_inner, x, t):
+        return apply_fn(params_inner, x[None, :], t[None, :])[0]
 
     # Vectorize residual computation
     residual = jax.vmap(
@@ -121,7 +123,7 @@ def compute_pinn_loss(
     return total_loss, loss_dict
 
 
-@jax.jit
+@partial(jax.jit, static_argnames=["apply_fn", "tx"])
 def train_step_jitted(
     params: dict,
     apply_fn: Callable,
@@ -139,10 +141,10 @@ def train_step_jitted(
     bc_weight: float,
     ic_weight: float,
 ) -> Tuple[dict, optax.OptState, Dict[str, jnp.ndarray]]:
-    """JIT-compiled training step (no function arguments)."""
+    """JIT-compiled training step with static function arguments."""
 
     def loss_fn(p):
-        # Use heat_equation_residual directly without passing it as argument
+        # Use heat_equation_residual directly
         from phio.physics.heat import heat_equation_residual
 
         return compute_pinn_loss(

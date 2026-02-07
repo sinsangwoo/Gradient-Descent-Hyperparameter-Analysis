@@ -88,7 +88,7 @@ def analytical_gaussian(
 
     # Gaussian solution
     u = (sigma0 / jnp.sqrt(sigma_t_sq)) * jnp.exp(
-        -(x[None, :] - x0) ** 2 / (2 * sigma_t_sq)
+        -((x[None, :] - x0) ** 2) / (2 * sigma_t_sq)
     )
 
     return u

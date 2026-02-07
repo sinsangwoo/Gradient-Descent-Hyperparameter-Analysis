@@ -16,7 +16,7 @@ class TestPINNLoss:
         net = MLP(hidden_dims=[16], output_dim=1)
         x_sample = random.normal(rng, (5, 2))
         params = net.init(rng, x_sample)
-        
+
         # Create sample data
         n = 10
         rng, *keys = random.split(rng, 7)
@@ -28,7 +28,7 @@ class TestPINNLoss:
         x_ic = random.uniform(keys[4], (n,))
         t_ic = jnp.zeros(n)
         u_ic = jnp.sin(jnp.pi * x_ic)
-        
+
         # Compute loss
         loss = pinn_loss(
             params,
@@ -42,7 +42,7 @@ class TestPINNLoss:
             t_ic,
             u_ic,
         )
-        
+
         # Check loss is scalar
         assert loss.shape == ()
         assert loss >= 0.0
@@ -53,7 +53,7 @@ class TestPINNLoss:
         net = MLP(hidden_dims=[16], output_dim=1)
         x_sample = random.normal(rng, (5, 2))
         params = net.init(rng, x_sample)
-        
+
         n = 10
         rng, *keys = random.split(rng, 7)
         x_colloc = random.uniform(keys[0], (n,))
@@ -64,18 +64,36 @@ class TestPINNLoss:
         x_ic = random.uniform(keys[4], (n,))
         t_ic = jnp.zeros(n)
         u_ic = jnp.sin(jnp.pi * x_ic)
-        
+
         # Compute with different weights
         loss1 = pinn_loss(
-            params, net.apply, x_colloc, t_colloc, x_bc, t_bc, u_bc, x_ic, t_ic, u_ic,
+            params,
+            net.apply,
+            x_colloc,
+            t_colloc,
+            x_bc,
+            t_bc,
+            u_bc,
+            x_ic,
+            t_ic,
+            u_ic,
             weights={"pde": 1.0, "bc": 1.0, "ic": 1.0},
         )
-        
+
         loss2 = pinn_loss(
-            params, net.apply, x_colloc, t_colloc, x_bc, t_bc, u_bc, x_ic, t_ic, u_ic,
+            params,
+            net.apply,
+            x_colloc,
+            t_colloc,
+            x_bc,
+            t_bc,
+            u_bc,
+            x_ic,
+            t_ic,
+            u_ic,
             weights={"pde": 0.0, "bc": 1.0, "ic": 1.0},
         )
-        
+
         # Loss should be different (unless PDE term is already zero)
         # Just check both are valid
         assert jnp.isfinite(loss1)
