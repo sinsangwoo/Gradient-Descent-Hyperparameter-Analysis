@@ -241,9 +241,9 @@ def plot_training_history(history: dict, save_path: str = "training_history.png"
 
 def main():
     """Main demonstration."""
-    print("="*60)
+    print("=" * 60)
     print("NAVIER-STOKES PINN: LID-DRIVEN CAVITY FLOW")
-    print("="*60)
+    print("=" * 60)
 
     # Configuration
     rng = jax.random.PRNGKey(42)
@@ -268,7 +268,9 @@ def main():
     print("\nInitializing neural network...")
     model = NSNetwork(hidden_dim=128, num_layers=4)
     state = create_ns_train_state(rng, model, learning_rate=learning_rate)
-    print(f"  Architecture: 3 inputs -> {model.num_layers}x{model.hidden_dim} -> 3 outputs")
+    print(
+        f"  Architecture: 3 inputs -> {model.num_layers}x{model.hidden_dim} -> 3 outputs"
+    )
 
     # Train
     print(f"\nTraining for {n_epochs} epochs...")
@@ -294,9 +296,9 @@ def main():
     elapsed_time = time.time() - start_time
 
     # Results
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("TRAINING COMPLETED")
-    print("="*60)
+    print("=" * 60)
     print(f"  Time: {elapsed_time:.2f} seconds")
     print(f"  Final total loss: {history['total'][-1]:.6e}")
     print(f"  Final momentum loss: {history['momentum'][-1]:.6e}")
@@ -308,9 +310,9 @@ def main():
     visualize_solution(state, nu, "navier_stokes_results.png")
     plot_training_history(history, "training_history.png")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMONSTRATION COMPLETE")
-    print("="*60)
+    print("=" * 60)
     print("\nOutputs:")
     print("  - navier_stokes_results.png: Flow field visualization")
     print("  - training_history.png: Training curves")
