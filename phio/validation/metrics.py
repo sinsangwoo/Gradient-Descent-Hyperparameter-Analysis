@@ -60,9 +60,9 @@ def generate_error_report(
         Formatted string report
     """
     report = []
-    report.append("="*60)
+    report.append("=" * 60)
     report.append(f"VALIDATION REPORT: Re = {reynolds_number}")
-    report.append("="*60)
+    report.append("=" * 60)
     report.append("")
 
     report.append("U-Velocity (Vertical Centerline):")
@@ -97,6 +97,6 @@ def generate_error_report(
         assessment = "NEEDS IMPROVEMENT (>10% error)"
 
     report.append(f"  Quality:            {assessment}")
-    report.append("="*60)
+    report.append("=" * 60)
 
     return "\n".join(report)

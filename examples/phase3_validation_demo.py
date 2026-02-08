@@ -106,9 +106,9 @@ def validate_pinn(
         reynolds_number: Reynolds number
         output_dir: Directory for output files
     """
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print(f"VALIDATING AGAINST GHIA BENCHMARK (Re={reynolds_number})")
-    print("="*60)
+    print("=" * 60)
 
     # Compare with benchmark
     u_error, v_error, predictions = GhiaCavityData.compare_with_pinn(
@@ -120,12 +120,8 @@ def validate_pinn(
     print(f"  V-velocity MAE: {v_error:.6f}")
 
     # Compute detailed metrics
-    u_metrics = compute_error_metrics(
-        predictions["u_pred"], predictions["u_benchmark"]
-    )
-    v_metrics = compute_error_metrics(
-        predictions["v_pred"], predictions["v_benchmark"]
-    )
+    u_metrics = compute_error_metrics(predictions["u_pred"], predictions["u_benchmark"])
+    v_metrics = compute_error_metrics(predictions["v_pred"], predictions["v_benchmark"])
 
     # Generate report
     report = generate_error_report(u_metrics, v_metrics, reynolds_number)
@@ -167,9 +163,9 @@ def validate_pinn(
 
 def main():
     """Main validation demonstration."""
-    print("="*60)
+    print("=" * 60)
     print("PHASE 3.1: REAL-WORLD VALIDATION")
-    print("="*60)
+    print("=" * 60)
     print("\nObjective: Validate PINN against Ghia et al. (1982) benchmark")
     print("Standard CFD validation dataset from literature")
 
@@ -218,9 +214,9 @@ def main():
     )
     training_time = time.time() - start_time
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("TRAINING COMPLETED")
-    print("="*60)
+    print("=" * 60)
     print(f"  Time: {training_time:.2f} seconds")
     print(f"  Final loss: {history['total'][-1]:.6e}")
 
@@ -230,9 +226,9 @@ def main():
     # Final summary
     avg_rel_l2 = (u_metrics["relative_l2"] + v_metrics["relative_l2"]) / 2
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("VALIDATION COMPLETE")
-    print("="*60)
+    print("=" * 60)
     print(f"\nKey Results:")
     print(f"  Training time: {training_time:.2f}s")
     print(f"  U-velocity MAE: {u_metrics['mae']:.6f}")
@@ -252,9 +248,9 @@ def main():
     print(f"  - error_distribution_re{reynolds_number}.png")
     print(f"  - validation_dashboard_re{reynolds_number}.png")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMONSTRATION COMPLETE")
-    print("="*60)
+    print("=" * 60)
 
 
 if __name__ == "__main__":
