@@ -7,86 +7,88 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen.svg)](https://github.com/sinsangwoo/Gradient-Descent-Hyperparameter-Analysis)
 [![Validated](https://img.shields.io/badge/validated-Ghia%20benchmark-blue.svg)](https://doi.org/10.1016/0021-9991(82)90058-4)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com)
 
-> **Production-ready Physics-Informed Neural Networks (PINNs) framework validated against industry-standard CFD benchmarks**
+> **Production-ready Physics-Informed Neural Networks with REST API, Docker deployment, and interactive dashboard**
 
 ---
 
 ## 🎯 Project Vision
 
-PhIO transforms how experimental physicists, CFD engineers, and materials scientists simulate complex physical systems. By combining physics-informed neural networks with GPU-accelerated automatic differentiation, we enable:
+PhIO is an end-to-end platform for solving PDEs with physics-informed neural networks:
 
-- **Speed**: 10-100x faster than Finite Element Methods (FEM)
-- **Accuracy**: Validated against Ghia et al. (1982) CFD benchmark
-- **Flexibility**: Unified framework for forward/inverse problems
-- **Production-Ready**: Industrial validation + professional error metrics
-
----
-
-## ✨ New in Phase 3.1
-
-### 🔬 Real-World Validation
-
-**Industry-standard benchmark validation**
-
-```python
-from phio.datasets.ghia_cavity import GhiaCavityData
-from phio.validation.metrics import compute_error_metrics
-from phio.validation.visualize import plot_validation_dashboard
-
-# Compare PINN with Ghia benchmark
-u_error, v_error, predictions = GhiaCavityData.compare_with_pinn(
-    trained_state, reynolds_number=100
-)
-
-# Generate professional validation report
-u_metrics = compute_error_metrics(predictions["u_pred"], predictions["u_benchmark"])
-plot_validation_dashboard(predictions, u_metrics, v_metrics, 100)
-```
-
-**Demo**: `python examples/phase3_validation_demo.py`
-
-**Features:**
-- Ghia et al. (1982) benchmark data (Re = 100, 400, 1000)
-- Quantitative error metrics (MAE, RMSE, Relative L2)
-- Professional validation dashboard (9 panels)
-- Automated quality assessment
-
-**Validation Results:**
-- U-velocity MAE: < 0.05 (< 5% error)
-- V-velocity MAE: < 0.05
-- Quality: EXCELLENT/GOOD
+- **Speed**: 10-100x faster than FEM
+- **Accuracy**: Validated against Ghia CFD benchmark (< 5% error)
+- **Production-Ready**: REST API + Docker + Interactive Dashboard
+- **Easy Deployment**: `docker-compose up` - that's it!
 
 ---
 
 ## 🚀 Quick Start
 
-### Installation
+### Option 1: Docker (Recommended)
 
 ```bash
+# Clone and start
 git clone https://github.com/sinsangwoo/Gradient-Descent-Hyperparameter-Analysis.git
 cd Gradient-Descent-Hyperparameter-Analysis
-python -m venv venv
-source venv/bin/activate
-pip install -e ".[dev]"
+docker-compose up
+
+# Access services
+# API: http://localhost:8000/docs
+# Dashboard: http://localhost:8501
 ```
 
-### Validated Example: Lid-Driven Cavity
+### Option 2: Local Installation
+
+```bash
+# Install
+pip install -e ".[dev]"
+
+# Start API
+uvicorn phio.api.app:create_app --factory --reload
+
+# Start Dashboard (separate terminal)
+streamlit run dashboard/app.py
+```
+
+---
+
+## ✨ New in Phase 3.2
+
+### 🐳 Production Pipeline
+
+**Complete end-to-end system:**
 
 ```python
-import jax
-from phio.solvers.ns_pinn import create_ns_train_state, train_ns_pinn
-from phio.datasets.ghia_cavity import GhiaCavityData
+from phio.data import DataLoader, Normalizer
+from phio.api import create_app
 
-# Train PINN
-model = NSNetwork()
-state = create_ns_train_state(rng, model)
-state, history = train_ns_pinn(state, ...)
+# 1. Load data
+loader = DataLoader()
+data = loader.load('simulation.csv')
 
-# Validate against benchmark
-u_error, v_error, predictions = GhiaCavityData.compare_with_pinn(state, 100)
-print(f"Validation error: {u_error:.4f}")
+# 2. Preprocess
+normalizer = Normalizer(method='minmax')
+data_norm = normalizer.fit_transform(data)
+
+# 3. Deploy API
+app = create_app()  # Instant REST API!
+
+# 4. Make predictions
+import requests
+response = requests.post('http://localhost:8000/predict', json={
+    'x': [0.1, 0.2, 0.3],
+    't': [0.0, 0.0, 0.0]
+})
 ```
+
+**Features:**
+- 📊 **Data Ingestion**: CSV, HDF5, NumPy support
+- 🔧 **Preprocessing**: Auto-normalization, grid generation
+- 🚀 **REST API**: FastAPI with OpenAPI docs
+- 🐳 **Docker**: One-command deployment
+- 📊 **Dashboard**: Interactive Streamlit UI
 
 ---
 
@@ -94,84 +96,142 @@ print(f"Validation error: {u_error:.4f}")
 
 ```
 phio/
-├── physics/          # PDE implementations
-│   ├── heat.py
-│   ├── wave.py
-│   └── navier_stokes.py
-├── solvers/          # PINN trainers
-├── datasets/         # Benchmark data ✨ NEW
-│   └── ghia_cavity.py
-├── validation/       # Validation tools ✨ NEW
-│   ├── metrics.py     # Error metrics
-│   └── visualize.py   # Professional plots
-└── ...
+├── data/              # Data ingestion ✨ NEW
+│   ├── loaders.py     # CSV, HDF5, NumPy
+│   └── preprocessing.py  # Normalization, grids
+├── api/               # REST API ✨ NEW
+│   ├── app.py         # FastAPI application
+│   └── models.py      # Pydantic schemas
+├── physics/           # PDE implementations
+├── solvers/           # PINN trainers
+├── datasets/          # Benchmark data
+└── validation/        # Validation tools
+
+dashboard/             # Streamlit UI ✨ NEW
+└── app.py             # Interactive dashboard
+
+Dockerfile             # API container ✨ NEW
+Dockerfile.streamlit   # Dashboard container ✨ NEW
+docker-compose.yml     # Orchestration ✨ NEW
 ```
 
 ---
 
 ## 📊 Development Roadmap
 
-### ✅ Phase 2.3: Navier-Stokes (COMPLETED)
-- 2D incompressible flow
-- Lid-driven cavity benchmark
-- Taylor-Green vortex validation
+### ✅ Phase 3.2: Production Pipeline (COMPLETED) **← CURRENT**
+- ✅ **Data ingestion**: CSV, HDF5, NumPy loaders
+- ✅ **Preprocessing**: Normalization, grid generation
+- ✅ **REST API**: FastAPI with Pydantic validation
+- ✅ **Docker**: Multi-container deployment
+- ✅ **Dashboard**: Interactive Streamlit UI
+- ✅ **Demo**: End-to-end pipeline example
 
-### ✅ Phase 3.1: Real-World Validation (COMPLETED) **← CURRENT**
-- ✅ **Ghia benchmark dataset**: Industry-standard CFD validation
-- ✅ **Quantitative metrics**: MAE, RMSE, Relative L2
-- ✅ **Professional visualization**: 9-panel validation dashboard
-- ✅ **Quality assessment**: Automated EXCELLENT/GOOD/ACCEPTABLE classification
-- ✅ **Reproducible demos**: Complete validation workflow
-
-### 🔜 Phase 3.2: Production Pipeline (Week 5)
-- Docker containerization
-- REST API (FastAPI)
-- Streamlit dashboard
-- Performance profiling
+### 🔜 Phase 3.3: Multi-GPU & Checkpointing (Week 5)
+- JAX multi-GPU training
+- Model checkpointing
+- Early stopping
+- TensorBoard integration
 
 ### 📅 Phase 4: Research Publication (Weeks 7-8)
+- Benchmark paper vs OpenFOAM
 - arXiv preprint
-- Benchmark paper vs OpenFOAM/ANSYS
 - Workshop submission
 
 ---
 
 ## 📚 Examples
 
-### Phase 3.1 Validation Examples ✨ **NEW**
-- [`examples/phase3_validation_demo.py`](examples/phase3_validation_demo.py)
-  - Train PINN on lid-driven cavity
-  - Compare with Ghia et al. (1982) benchmark
-  - Generate quantitative error report
-  - Create professional validation dashboard
-  - Quality assessment: EXCELLENT/GOOD/ACCEPTABLE
+### API Usage
 
-**Run demo:**
-```bash
-python examples/phase3_validation_demo.py
+```python
+import requests
+
+# Health check
+response = requests.get('http://localhost:8000/health')
+print(response.json())
+# {'status': 'healthy', 'version': '0.3.2', ...}
+
+# Prediction
+response = requests.post('http://localhost:8000/predict', json={
+    'x': [0.1, 0.2, 0.3, 0.4, 0.5],
+    't': [0.0, 0.0, 0.0, 0.0, 0.0],
+    'model_name': 'heat-1d'
+})
+print(response.json())
+# {'predictions': [...], 'n_points': 5, 'model_version': 'demo-v1'}
 ```
 
-**Outputs:**
-- `validation_report_re100.txt`: Detailed error metrics
-- `benchmark_comparison_re100.png`: PINN vs benchmark plots
-- `error_distribution_re100.png`: Error analysis
-- `validation_dashboard_re100.png`: 9-panel professional dashboard
+### Data Loading
+
+```python
+from phio.data import DataLoader, Normalizer
+
+# Load from CSV
+loader = DataLoader()
+data = loader.load('experiment_data.csv')
+
+# Normalize
+normalizer = Normalizer(method='minmax')
+data_norm = normalizer.fit_transform(data['temperature'])
+
+# Save for later
+loader.save(data_norm, 'processed.npz')
+```
+
+### Phase 3.2 Demo
+
+```bash
+python examples/phase3_api_demo.py
+```
+
+---
+
+## 🐳 Docker Deployment
+
+### Quick Start
+
+```bash
+# Start all services
+docker-compose up -d
+
+# Check status
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+
+# Stop
+docker-compose down
+```
+
+### Services
+
+- **API**: http://localhost:8000
+  - Swagger docs: http://localhost:8000/docs
+  - ReDoc: http://localhost:8000/redoc
+
+- **Dashboard**: http://localhost:8501
+  - Interactive predictions
+  - Validation results
+  - Real-time visualization
 
 ---
 
 ## 🚀 Success Metrics
 
-### Technical (Phase 3.1 - ACHIEVED ✅)
-- ✅ Ghia benchmark implementation (Re = 100, 400, 1000)
-- ✅ U-velocity error < 5% (MAE < 0.05)
-- ✅ V-velocity error < 5% (MAE < 0.05)
-- ✅ Professional validation framework
-- ✅ Reproducible demos with automated quality assessment
+### Technical (Phase 3.2 - ACHIEVED ✅)
+- ✅ REST API with FastAPI
+- ✅ Docker containerization
+- ✅ Interactive Streamlit dashboard
+- ✅ Data loading (CSV, HDF5, NumPy)
+- ✅ Preprocessing pipeline
+- ✅ End-to-end demo
 
-### Phase 3.2 Target
-- ☐ Docker image published
-- ☐ REST API deployed
-- ☐ Streamlit dashboard live
+### Phase 3.3 Target
+- ☐ Multi-GPU training support
+- ☐ Model checkpointing
+- ☐ TensorBoard integration
 
 ---
 
@@ -183,24 +243,11 @@ python examples/phase3_validation_demo.py
   author = {PhIO Contributors},
   year = {2025},
   url = {https://github.com/sinsangwoo/Gradient-Descent-Hyperparameter-Analysis},
-  version = {0.3.1},
-  note = {Validated against Ghia et al. (1982) CFD benchmark}
-}
-```
-
-**Reference Benchmark:**
-```bibtex
-@article{ghia1982high,
-  title={High-Re solutions for incompressible flow using the Navier-Stokes equations and a multigrid method},
-  author={Ghia, U and Ghia, KN and Shin, CT},
-  journal={Journal of Computational Physics},
-  volume={48},
-  number={3},
-  pages={387--411},
-  year={1982}
+  version = {0.3.2},
+  note = {Production-ready with REST API and Docker deployment}
 }
 ```
 
 ---
 
-**Built with ❤️ by physicists, for physicists. Validated by industry standards. 🚀**
+**Built with ❤️ by physicists, for physicists. Production-ready. Deploy anywhere. 🚀**
