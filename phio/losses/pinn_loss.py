@@ -104,9 +104,7 @@ def pinn_loss(
         weights = {"pde": 1.0, "bc": 1.0, "ic": 1.0}
 
     # PDE residual loss
-    residual = compute_pde_residual(
-        network_fn, params, x_colloc, t_colloc, pde_type, alpha
-    )
+    residual = compute_pde_residual(network_fn, params, x_colloc, t_colloc, pde_type, alpha)
     loss_pde = jnp.mean(residual**2)
 
     # Boundary condition loss
@@ -120,8 +118,6 @@ def pinn_loss(
     loss_ic = jnp.mean((u_pred_ic - u_ic) ** 2)
 
     # Weighted total loss
-    total_loss = (
-        weights["pde"] * loss_pde + weights["bc"] * loss_bc + weights["ic"] * loss_ic
-    )
+    total_loss = weights["pde"] * loss_pde + weights["bc"] * loss_bc + weights["ic"] * loss_ic
 
     return total_loss

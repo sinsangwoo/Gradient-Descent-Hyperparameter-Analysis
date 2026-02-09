@@ -27,13 +27,9 @@ def gaussian_ic(x: jnp.ndarray) -> jnp.ndarray:
     return jnp.exp(-50 * (x - 0.5) ** 2)
 
 
-def analytical_heat_solution(
-    x: jnp.ndarray, t: jnp.ndarray, alpha: float = 0.01
-) -> jnp.ndarray:
+def analytical_heat_solution(x: jnp.ndarray, t: jnp.ndarray, alpha: float = 0.01) -> jnp.ndarray:
     """Analytical solution for heat equation with Gaussian IC."""
-    return jnp.exp(-50 * (x - 0.5) ** 2 / (1 + 200 * alpha * t)) / jnp.sqrt(
-        1 + 200 * alpha * t
-    )
+    return jnp.exp(-50 * (x - 0.5) ** 2 / (1 + 200 * alpha * t)) / jnp.sqrt(1 + 200 * alpha * t)
 
 
 class TestMultiFidelity:
@@ -65,9 +61,7 @@ class TestMultiFidelity:
         low_state, _, _ = solver.train_low_fidelity(rng, gaussian_ic)
 
         # Refine with high-fidelity
-        high_state, history, elapsed_time = solver.refine_with_high_fidelity(
-            low_state, gaussian_ic
-        )
+        high_state, history, elapsed_time = solver.refine_with_high_fidelity(low_state, gaussian_ic)
 
         assert high_state is not None
         assert elapsed_time > 0

@@ -44,9 +44,7 @@ class AdaptiveLossBalancer:
         # Track gradient history for stability
         self.grad_history = {k: [] for k in self.weights.keys()}
 
-    def update_weights(
-        self, gradients: Dict[str, jnp.ndarray], epoch: int
-    ) -> Dict[str, float]:
+    def update_weights(self, gradients: Dict[str, jnp.ndarray], epoch: int) -> Dict[str, float]:
         """Update loss weights based on gradient magnitudes.
 
         Args:
@@ -118,9 +116,7 @@ class NTKBalancer:
         # Track NTK eigenvalues
         self.ntk_eigenvalues = {k: 1.0 for k in self.weights.keys()}
 
-    def compute_ntk_eigenvalue(
-        self, loss_fn, params: dict, sample_points: jnp.ndarray
-    ) -> float:
+    def compute_ntk_eigenvalue(self, loss_fn, params: dict, sample_points: jnp.ndarray) -> float:
         """Estimate largest NTK eigenvalue for a loss component.
 
         Args:

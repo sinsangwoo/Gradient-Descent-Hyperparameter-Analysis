@@ -104,9 +104,7 @@ class FourierFeatureMLP(nn.Module):
 
         # Fourier feature encoding: [sin(2π B^T x), cos(2π B^T x)]
         projected = 2 * jnp.pi * jnp.dot(inputs, self.B)
-        fourier_features = jnp.concatenate(
-            [jnp.sin(projected), jnp.cos(projected)], axis=-1
-        )
+        fourier_features = jnp.concatenate([jnp.sin(projected), jnp.cos(projected)], axis=-1)
 
         # Standard MLP on Fourier features
         z = fourier_features

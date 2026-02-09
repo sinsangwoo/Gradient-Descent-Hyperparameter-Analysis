@@ -52,15 +52,11 @@ class TestCausalTraining:
         data = simple_heat_data
 
         # Initialize scheduler
-        scheduler = CausalWeightScheduler(
-            t_min=0.0, t_max=1.0, num_stages=3, epochs_per_stage=50
-        )
+        scheduler = CausalWeightScheduler(t_min=0.0, t_max=1.0, num_stages=3, epochs_per_stage=50)
 
         # Test weight computation - fix shape mismatch
         weights = scheduler.get_temporal_weights(data["t_pde"].flatten(), epoch=0)
-        assert weights.shape == (
-            data["t_pde"].shape[0],
-        )  # Changed from data["t_pde"].shape
+        assert weights.shape == (data["t_pde"].shape[0],)  # Changed from data["t_pde"].shape
         assert jnp.all((weights >= 0) & (weights <= 1))
 
         # Check stage progression
@@ -96,8 +92,7 @@ class TestAdaptiveBalancing:
         # Weights should have changed
         final_weights = balancer.weights
         assert any(
-            abs(final_weights[k] - initial_weights[k]) > 0.01
-            for k in initial_weights.keys()
+            abs(final_weights[k] - initial_weights[k]) > 0.01 for k in initial_weights.keys()
         )
 
     def test_convergence_improvement(self, simple_heat_data):

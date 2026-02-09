@@ -162,9 +162,7 @@ def visualize_solution(
     plt.colorbar(im1, ax=axes[0, 0])
 
     # 2. Streamlines
-    axes[0, 1].streamplot(
-        X, Y, U, V, color=speed, cmap="viridis", linewidth=1.5, density=2
-    )
+    axes[0, 1].streamplot(X, Y, U, V, color=speed, cmap="viridis", linewidth=1.5, density=2)
     axes[0, 1].set_title("Streamlines", fontsize=12, fontweight="bold")
     axes[0, 1].set_xlabel("x")
     axes[0, 1].set_ylabel("y")
@@ -268,9 +266,7 @@ def main():
     print("\nInitializing neural network...")
     model = NSNetwork(hidden_dim=128, num_layers=4)
     state = create_ns_train_state(rng, model, learning_rate=learning_rate)
-    print(
-        f"  Architecture: 3 inputs -> {model.num_layers}x{model.hidden_dim} -> 3 outputs"
-    )
+    print(f"  Architecture: 3 inputs -> {model.num_layers}x{model.hidden_dim} -> 3 outputs")
 
     # Train
     print(f"\nTraining for {n_epochs} epochs...")

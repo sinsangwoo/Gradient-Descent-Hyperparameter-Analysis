@@ -61,10 +61,7 @@ class AdaptivePINNSolver(PINNSolver):
             }
 
         self.curriculum_schedule = curriculum_schedule
-        msg = (
-            f"Initialized adaptive solver with "
-            f"{len(curriculum_schedule)} curriculum phases"
-        )
+        msg = f"Initialized adaptive solver with " f"{len(curriculum_schedule)} curriculum phases"
         logger.info(msg)
 
     def _get_current_weights(self, epoch: int) -> Dict[str, float]:
@@ -93,6 +90,4 @@ class AdaptivePINNSolver(PINNSolver):
         # For now, call parent train with final weights
         # TODO: Implement dynamic weight adjustment per epoch
         final_weights = self._get_current_weights(num_epochs - 1)
-        return super().train(
-            num_epochs=num_epochs, loss_weights=final_weights, **kwargs
-        )
+        return super().train(num_epochs=num_epochs, loss_weights=final_weights, **kwargs)

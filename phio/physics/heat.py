@@ -47,9 +47,7 @@ def heat_equation_residual(
     u_t = jax.vmap(jax.grad(u_t_fn, argnums=0))(t.flatten(), x.flatten())
 
     # Second derivative in space
-    u_xx = jax.vmap(jax.grad(jax.grad(u_x_fn, argnums=0), argnums=0))(
-        x.flatten(), t.flatten()
-    )
+    u_xx = jax.vmap(jax.grad(jax.grad(u_x_fn, argnums=0), argnums=0))(x.flatten(), t.flatten())
 
     # Heat equation residual: u_t - alpha * u_xx = 0
     residual = u_t - alpha * u_xx
@@ -87,9 +85,7 @@ def analytical_gaussian(
     sigma_t_sq = sigma0**2 + 2 * alpha * t[:, None]
 
     # Gaussian solution
-    u = (sigma0 / jnp.sqrt(sigma_t_sq)) * jnp.exp(
-        -((x[None, :] - x0) ** 2) / (2 * sigma_t_sq)
-    )
+    u = (sigma0 / jnp.sqrt(sigma_t_sq)) * jnp.exp(-((x[None, :] - x0) ** 2) / (2 * sigma_t_sq))
 
     return u
 

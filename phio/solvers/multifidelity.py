@@ -164,9 +164,7 @@ class MultiFidelitySolver:
         # Start from low-fidelity parameters
         state = initial_state.replace(
             tx=initial_state.tx.__class__(learning_rate),
-            opt_state=initial_state.tx.__class__(learning_rate).init(
-                initial_state.params
-            ),
+            opt_state=initial_state.tx.__class__(learning_rate).init(initial_state.params),
         )
 
         state, history = train_pinn(
@@ -203,9 +201,9 @@ class MultiFidelitySolver:
         Returns:
             results: Dictionary with states, histories, metrics
         """
-        print("="*60)
+        print("=" * 60)
         print("MULTI-FIDELITY TRAINING PIPELINE")
-        print("="*60)
+        print("=" * 60)
 
         # Low-fidelity phase
         rng, key_low = jax.random.split(rng)
@@ -213,9 +211,7 @@ class MultiFidelitySolver:
 
         # High-fidelity phase
         rng, key_high = jax.random.split(rng)
-        state_high, history_high = self.train_high_fidelity(
-            key_high, state_low
-        )
+        state_high, history_high = self.train_high_fidelity(key_high, state_low)
 
         # Compute metrics if analytical solution provided
         results = {
@@ -245,15 +241,17 @@ class MultiFidelitySolver:
 
             error_reduction = (error_low - error_high) / error_low * 100
 
-            results.update({
-                "error_low": float(error_low),
-                "error_high": float(error_high),
-                "error_reduction_percent": float(error_reduction),
-            })
+            results.update(
+                {
+                    "error_low": float(error_low),
+                    "error_high": float(error_high),
+                    "error_reduction_percent": float(error_reduction),
+                }
+            )
 
-            print("\n" + "="*60)
+            print("\n" + "=" * 60)
             print("RESULTS")
-            print("="*60)
+            print("=" * 60)
             print(f"Low-fidelity error:  {error_low:.6e}")
             print(f"High-fidelity error: {error_high:.6e}")
             print(f"Error reduction:     {error_reduction:.2f}%")
@@ -269,6 +267,6 @@ class MultiFidelitySolver:
             results["cost_function"] = float(cost_function)
 
             print(f"\nCost function (1/error*cost): {cost_function:.6e}")
-            print("="*60)
+            print("=" * 60)
 
         return results

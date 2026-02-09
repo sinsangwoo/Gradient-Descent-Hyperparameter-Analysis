@@ -34,9 +34,7 @@ def gaussian_initial_condition(x: jnp.ndarray) -> jnp.ndarray:
     return jnp.exp(-50 * (x - 0.5) ** 2)
 
 
-def analytical_heat_solution(
-    x: jnp.ndarray, t: jnp.ndarray, alpha: float = 0.01
-) -> jnp.ndarray:
+def analytical_heat_solution(x: jnp.ndarray, t: jnp.ndarray, alpha: float = 0.01) -> jnp.ndarray:
     """Analytical solution for heat equation with Gaussian IC."""
     sigma_t = jnp.sqrt(1 + 200 * alpha * t)
     return jnp.exp(-50 * (x - 0.5) ** 2 / (sigma_t**2)) / sigma_t

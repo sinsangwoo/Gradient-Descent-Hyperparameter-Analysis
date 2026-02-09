@@ -331,8 +331,7 @@ class GhiaCavityData:
             }
         else:
             raise ValueError(
-                f"Reynolds number {reynolds_number} not available. "
-                "Available: 100, 400, 1000"
+                f"Reynolds number {reynolds_number} not available. " "Available: 100, 400, 1000"
             )
 
     @classmethod

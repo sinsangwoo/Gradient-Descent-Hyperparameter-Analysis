@@ -31,9 +31,7 @@ def compute_error_metrics(
     max_error = float(jnp.max(jnp.abs(error)))
 
     # Relative L2 error: ||pred - true||_2 / ||true||_2
-    relative_l2 = float(
-        jnp.linalg.norm(error) / (jnp.linalg.norm(ground_truth) + 1e-10)
-    )
+    relative_l2 = float(jnp.linalg.norm(error) / (jnp.linalg.norm(ground_truth) + 1e-10))
 
     return {
         "mae": mae,
