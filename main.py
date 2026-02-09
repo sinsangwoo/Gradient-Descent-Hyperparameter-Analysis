@@ -50,9 +50,7 @@ NUM_EPOCHS = 100
 def generate_dataset(n_samples=200, n_features=1):
     """Scikit-learn을 사용하여 선형 회귀용 데이터셋을 생성합니다."""
     print(f"\n[데이터 생성] 샘플 수: {n_samples}, 특성 수: {n_features}")
-    X, y = make_regression(
-        n_samples=n_samples, n_features=n_features, noise=20, random_state=42
-    )
+    X, y = make_regression(n_samples=n_samples, n_features=n_features, noise=20, random_state=42)
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
     y_scaled = y.reshape(-1, 1)
@@ -78,9 +76,7 @@ def build_linear_regression_model(n_features=1):
 # 3.2 실험 설계 및 실행
 # ==============================================================================
 # [최종 수정] KeyError를 근본적으로 해결한 범용 실험 함수
-def run_and_plot_experiment(
-    title, X, y, configs, varying_param_key, display_name, y_limit=None
-):
+def run_and_plot_experiment(title, X, y, configs, varying_param_key, display_name, y_limit=None):
     """
     주어진 설정에 따라 실험을 실행하고 결과를 시각화하는 범용 함수
     - varying_param_key: 실제 config 딕셔너리에 사용된 키 (e.g., 'learning_rate')
@@ -108,15 +104,11 @@ def run_and_plot_experiment(
         print(f"실행 조건: {label}")
 
         start_time = time.time()
-        history = model.fit(
-            X, y, epochs=NUM_EPOCHS, batch_size=config["batch_size"], verbose=0
-        )
+        history = model.fit(X, y, epochs=NUM_EPOCHS, batch_size=config["batch_size"], verbose=0)
         end_time = time.time()
 
         final_loss = history.history["loss"][-1]
-        print(
-            f"  -> 최종 Loss: {final_loss:.4f}, 학습 시간: {end_time - start_time:.2f}초"
-        )
+        print(f"  -> 최종 Loss: {final_loss:.4f}, 학습 시간: {end_time - start_time:.2f}초")
 
         plt.plot(history.history["loss"], label=label, lw=2)
 

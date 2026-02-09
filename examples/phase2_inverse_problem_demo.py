@@ -41,9 +41,7 @@ def generate_measurements(rng, true_alpha=0.01, n_measurements=30, noise_level=0
     x_meas = jax.random.uniform(rng, shape=(n_measurements,), minval=0.1, maxval=0.9)
     t_meas = jax.random.uniform(rng, shape=(n_measurements,), minval=0.1, maxval=0.5)
 
-    u_true = jax.vmap(lambda x, t: analytical_solution(x, t, true_alpha))(
-        x_meas, t_meas
-    )
+    u_true = jax.vmap(lambda x, t: analytical_solution(x, t, true_alpha))(x_meas, t_meas)
 
     rng, noise_rng = jax.random.split(rng)
     noise = jax.random.normal(noise_rng, shape=u_true.shape) * noise_level
@@ -86,9 +84,7 @@ def plot_results(x_meas, t_meas, u_meas, u_true, history, true_alpha):
 
     # Plot 3: Measurement locations
     ax = axes[1, 0]
-    scatter = ax.scatter(
-        x_meas, t_meas, c=u_meas, s=100, cmap="viridis", edgecolor="black"
-    )
+    scatter = ax.scatter(x_meas, t_meas, c=u_meas, s=100, cmap="viridis", edgecolor="black")
     ax.set_xlabel("Space (x)")
     ax.set_ylabel("Time (t)")
     ax.set_title(f"Measurement Locations (n={len(u_meas)})")

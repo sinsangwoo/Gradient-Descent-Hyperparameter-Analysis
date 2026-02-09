@@ -92,9 +92,9 @@ def compute_pinn_loss(
         return apply_fn(params_inner, x[None, :], t[None, :])[0]
 
     # Vectorize residual computation
-    residual = jax.vmap(
-        lambda x, t: pde_residual_fn(predict_single, params, x, t, alpha=alpha)
-    )(x_pde, t_pde)
+    residual = jax.vmap(lambda x, t: pde_residual_fn(predict_single, params, x, t, alpha=alpha))(
+        x_pde, t_pde
+    )
     loss_pde = jnp.mean(residual**2)
 
     # Boundary condition loss

@@ -115,9 +115,7 @@ def plot_error_distribution(
     axes[1, 0].axvline(0, color="k", linestyle="--", linewidth=2)
     axes[1, 0].set_xlabel("Error in u", fontsize=11)
     axes[1, 0].set_ylabel("Frequency", fontsize=11)
-    axes[1, 0].set_title(
-        "U-Velocity Error Distribution", fontsize=12, fontweight="bold"
-    )
+    axes[1, 0].set_title("U-Velocity Error Distribution", fontsize=12, fontweight="bold")
     axes[1, 0].grid(True, alpha=0.3, axis="y")
 
     # Error histogram for v
@@ -125,9 +123,7 @@ def plot_error_distribution(
     axes[1, 1].axvline(0, color="k", linestyle="--", linewidth=2)
     axes[1, 1].set_xlabel("Error in v", fontsize=11)
     axes[1, 1].set_ylabel("Frequency", fontsize=11)
-    axes[1, 1].set_title(
-        "V-Velocity Error Distribution", fontsize=12, fontweight="bold"
-    )
+    axes[1, 1].set_title("V-Velocity Error Distribution", fontsize=12, fontweight="bold")
     axes[1, 1].grid(True, alpha=0.3, axis="y")
 
     plt.tight_layout()
@@ -171,9 +167,7 @@ def plot_validation_dashboard(
         markersize=6,
         label="Benchmark",
     )
-    ax1.plot(
-        predictions["u_pred"], predictions["y_coords"], "r-", linewidth=2, label="PINN"
-    )
+    ax1.plot(predictions["u_pred"], predictions["y_coords"], "r-", linewidth=2, label="PINN")
     ax1.set_xlabel("u")
     ax1.set_ylabel("y")
     ax1.set_title("U-Velocity (x=0.5)", fontweight="bold")
@@ -189,9 +183,7 @@ def plot_validation_dashboard(
         markersize=6,
         label="Benchmark",
     )
-    ax2.plot(
-        predictions["x_coords"], predictions["v_pred"], "b-", linewidth=2, label="PINN"
-    )
+    ax2.plot(predictions["x_coords"], predictions["v_pred"], "b-", linewidth=2, label="PINN")
     ax2.set_xlabel("x")
     ax2.set_ylabel("v")
     ax2.set_title("V-Velocity (y=0.5)", fontweight="bold")
@@ -248,12 +240,8 @@ def plot_validation_dashboard(
 
     # 6. Combined error histogram
     ax6 = fig.add_subplot(gs[1, 2])
-    ax6.hist(
-        u_error, bins=10, alpha=0.7, label="U-error", color="red", edgecolor="black"
-    )
-    ax6.hist(
-        v_error, bins=10, alpha=0.7, label="V-error", color="blue", edgecolor="black"
-    )
+    ax6.hist(u_error, bins=10, alpha=0.7, label="U-error", color="red", edgecolor="black")
+    ax6.hist(v_error, bins=10, alpha=0.7, label="V-error", color="blue", edgecolor="black")
     ax6.axvline(0, color="k", linestyle="--", linewidth=2)
     ax6.set_xlabel("Error")
     ax6.set_ylabel("Frequency")
@@ -272,9 +260,7 @@ def plot_validation_dashboard(
     ax7.grid(True, alpha=0.3)
 
     ax8 = fig.add_subplot(gs[2, 1])
-    ax8.scatter(
-        predictions["v_benchmark"], predictions["v_pred"], alpha=0.6, s=50, color="blue"
-    )
+    ax8.scatter(predictions["v_benchmark"], predictions["v_pred"], alpha=0.6, s=50, color="blue")
     lim = [predictions["v_benchmark"].min(), predictions["v_benchmark"].max()]
     ax8.plot(lim, lim, "k--", alpha=0.5, linewidth=2)
     ax8.set_xlabel("Benchmark V")

@@ -4,9 +4,7 @@ from typing import Dict
 import jax.numpy as jnp
 
 
-def compute_l2_error(
-    u_pred: jnp.ndarray, u_exact: jnp.ndarray, relative: bool = True
-) -> float:
+def compute_l2_error(u_pred: jnp.ndarray, u_exact: jnp.ndarray, relative: bool = True) -> float:
     """Compute L2 error between predicted and exact solutions.
 
     Args:

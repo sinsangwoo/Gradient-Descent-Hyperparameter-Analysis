@@ -30,9 +30,7 @@ def sample_training_data():
 
     # Initial condition
     x_ic = jnp.linspace(0, 1, n_ic)
-    u_ic = analytical_gaussian(
-        x_ic, jnp.zeros_like(x_ic), alpha=alpha, x0=0.5, sigma0=0.1
-    )
+    u_ic = analytical_gaussian(x_ic, jnp.zeros_like(x_ic), alpha=alpha, x0=0.5, sigma0=0.1)
     u_ic = u_ic.squeeze()
 
     return {

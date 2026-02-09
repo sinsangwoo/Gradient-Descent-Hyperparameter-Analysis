@@ -13,9 +13,7 @@ class TestCausalWeighting:
 
     def test_initialization(self):
         """Scheduler should initialize with correct parameters."""
-        scheduler = CausalWeightScheduler(
-            t_min=0.0, t_max=1.0, num_stages=5, epochs_per_stage=1000
-        )
+        scheduler = CausalWeightScheduler(t_min=0.0, t_max=1.0, num_stages=5, epochs_per_stage=1000)
 
         assert scheduler.t_min == 0.0
         assert scheduler.t_max == 1.0
@@ -24,9 +22,7 @@ class TestCausalWeighting:
 
     def test_temporal_progression(self):
         """Weights should progress causally through time."""
-        scheduler = CausalWeightScheduler(
-            t_min=0.0, t_max=1.0, num_stages=4, epochs_per_stage=1000
-        )
+        scheduler = CausalWeightScheduler(t_min=0.0, t_max=1.0, num_stages=4, epochs_per_stage=1000)
 
         t = jnp.linspace(0, 1, 100)
 
@@ -107,9 +103,7 @@ class TestAdaptiveLossBalancer:
 
         # Weights should be clamped (relaxed bounds)
         for name, w in balancer.weights.items():
-            assert (
-                0.001 <= w <= 1000.0
-            ), f"Weight {name}={w} outside bounds [0.001, 1000.0]"
+            assert 0.001 <= w <= 1000.0, f"Weight {name}={w} outside bounds [0.001, 1000.0]"
 
 
 class TestNTKBalancer:

@@ -22,12 +22,8 @@ def main():
 
     # Train command
     train_parser = subparsers.add_parser("train", help="Train a PINN model")
-    train_parser.add_argument(
-        "--config", type=str, required=True, help="Path to config YAML file"
-    )
-    train_parser.add_argument(
-        "--output", type=str, default="./results", help="Output directory"
-    )
+    train_parser.add_argument("--config", type=str, required=True, help="Path to config YAML file")
+    train_parser.add_argument("--output", type=str, default="./results", help="Output directory")
 
     # Evaluate command
     eval_parser = subparsers.add_parser("eval", help="Evaluate trained model")

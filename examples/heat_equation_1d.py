@@ -73,9 +73,7 @@ def generate_training_data(
     # Initial condition: Gaussian pulse
     x_ic_vals = np.linspace(x_range[0], x_range[1], n_ic)
     x_ic = jnp.array(x_ic_vals)
-    u_ic = analytical_gaussian(
-        x_ic, jnp.zeros_like(x_ic), alpha=alpha, x0=0.5, sigma0=0.1
-    )
+    u_ic = analytical_gaussian(x_ic, jnp.zeros_like(x_ic), alpha=alpha, x0=0.5, sigma0=0.1)
     u_ic = u_ic.squeeze()
 
     return {
@@ -109,9 +107,7 @@ def main():
 
     # Initialize model
     print("\n[2/5] Initializing PINN (Fourier Feature MLP)...")
-    model = FourierFeatureMLP(
-        features=[128, 128, 128, 1], fourier_features=64, sigma=5.0
-    )
+    model = FourierFeatureMLP(features=[128, 128, 128, 1], fourier_features=64, sigma=5.0)
 
     state = create_train_state(
         rng,
@@ -120,9 +116,7 @@ def main():
         sample_input=(data["x_pde"][:1], data["t_pde"][:1]),
     )
     print(f"  - Network: {model}")
-    print(
-        f"  - Parameters: {sum(x.size for x in jax.tree_util.tree_leaves(state.params))}"
-    )
+    print(f"  - Parameters: {sum(x.size for x in jax.tree_util.tree_leaves(state.params))}")
 
     # Curriculum learning schedule
     print("\n[3/5] Training with curriculum learning...")
@@ -162,9 +156,9 @@ def main():
     X_test, T_test = jnp.meshgrid(x_test, t_test)
 
     # PINN prediction
-    u_pred = jax.vmap(
-        jax.vmap(state.apply_fn, in_axes=(None, 0, None)), in_axes=(None, None, 0)
-    )(state.params, X_test, T_test).squeeze()
+    u_pred = jax.vmap(jax.vmap(state.apply_fn, in_axes=(None, 0, None)), in_axes=(None, None, 0))(
+        state.params, X_test, T_test
+    ).squeeze()
 
     # Analytical solution
     u_true = analytical_gaussian(x_test, t_test, alpha=alpha, x0=0.5, sigma0=0.1)

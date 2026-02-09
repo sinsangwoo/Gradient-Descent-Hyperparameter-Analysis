@@ -1,7 +1,7 @@
 """Adaptive PINN solver with curriculum learning."""
 
 from typing import Dict, List
-import jax.numpy as jnp
+
 from phio.solvers.base import PINNSolver
 from phio.utils import logger
 
@@ -44,10 +44,12 @@ class AdaptivePINNSolver(PINNSolver):
     def __init__(
         self,
         pde,
-        hidden_dims: List[int] = [64, 64, 64],
+        hidden_dims: List[int] = None,
         curriculum_schedule: Dict[tuple, Dict[str, float]] = None,
         **kwargs,
     ):
+        if hidden_dims is None:
+            hidden_dims = [64, 64, 64]
         super().__init__(pde, hidden_dims, **kwargs)
 
         # Default curriculum: gradual introduction of PDE term
@@ -59,9 +61,8 @@ class AdaptivePINNSolver(PINNSolver):
             }
 
         self.curriculum_schedule = curriculum_schedule
-        logger.info(
-            f"Initialized adaptive solver with {len(curriculum_schedule)} curriculum phases"
-        )
+        msg = f"Initialized adaptive solver with " f"{len(curriculum_schedule)} curriculum phases"
+        logger.info(msg)
 
     def _get_current_weights(self, epoch: int) -> Dict[str, float]:
         """Get loss weights for current epoch based on curriculum."""
@@ -79,13 +80,14 @@ class AdaptivePINNSolver(PINNSolver):
         logger.info("Starting adaptive curriculum training...")
         for (start, end), weights in self.curriculum_schedule.items():
             end_display = "∞" if end == float("inf") else end
-            logger.info(
-                f"  Epochs {start}-{end_display}: PDE={weights['pde']}, BC={weights['bc']}, IC={weights['ic']}"
+            msg = (
+                f"  Epochs {start}-{end_display}: "
+                f"PDE={weights['pde']}, BC={weights['bc']}, "
+                f"IC={weights['ic']}"
             )
+            logger.info(msg)
 
         # For now, call parent train with final weights
         # TODO: Implement dynamic weight adjustment per epoch
         final_weights = self._get_current_weights(num_epochs - 1)
-        return super().train(
-            num_epochs=num_epochs, loss_weights=final_weights, **kwargs
-        )
+        return super().train(num_epochs=num_epochs, loss_weights=final_weights, **kwargs)

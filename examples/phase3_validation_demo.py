@@ -111,9 +111,7 @@ def validate_pinn(
     print("=" * 60)
 
     # Compare with benchmark
-    u_error, v_error, predictions = GhiaCavityData.compare_with_pinn(
-        state, reynolds_number
-    )
+    u_error, v_error, predictions = GhiaCavityData.compare_with_pinn(state, reynolds_number)
 
     print(f"\nQuick Summary:")
     print(f"  U-velocity MAE: {u_error:.6f}")

@@ -1,0 +1,23 @@
+# Temporary ignores for legacy code
+phio/core/pde.py:4:1: F401
+phio/optimizers/causal.py:9:1: F401
+phio/solvers/base.py:3:1: F401
+phio/solvers/base.py:8:1: F401
+phio/solvers/base.py:9:1: F401
+phio/solvers/base.py:14:1: F401
+phio/solvers/inverse_problem.py:9:1: F401
+phio/solvers/inverse_problem.py:13:1: F401
+phio/utils/visualization.py:4:1: F401
+tests/conftest.py:4:1: F401
+tests/integration/test_advanced_optimizers.py:78:9: F841
+tests/integration/test_heat_solver.py:114:9: F841
+tests/integration/test_inverse_problem.py:5:1: F401
+tests/integration/test_multifidelity.py:5:1: F401
+tests/unit/test_heat_equation.py:3:1: F401
+tests/unit/test_losses.py:3:1: F401
+tests/unit/test_losses.py:6:1: F401
+tests/unit/test_navier_stokes.py:3:1: F401
+tests/unit/test_network.py:48:13: F841
+tests/unit/test_optimizers.py:3:1: F401
+tests/unit/test_pde.py:3:1: F401
+tests/unit/test_utils.py:3:1: F401

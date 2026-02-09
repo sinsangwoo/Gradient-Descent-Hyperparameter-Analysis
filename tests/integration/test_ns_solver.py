@@ -116,9 +116,7 @@ class TestNSTraining:
         y_bc = jax.random.uniform(key, (n_bc,)) * 2 * jnp.pi
         t_bc = jnp.zeros(n_bc)
 
-        u_bc, v_bc, _ = jax.vmap(lambda x, y: analytical_taylor_green(x, y, 0.0, nu))(
-            x_bc, y_bc
-        )
+        u_bc, v_bc, _ = jax.vmap(lambda x, y: analytical_taylor_green(x, y, 0.0, nu))(x_bc, y_bc)
 
         x_ic, y_ic = x_bc, y_bc
         u_ic, v_ic = u_bc, v_bc
@@ -163,9 +161,9 @@ class TestNSTraining:
         v_pred = uvp_pred[:, 1]
 
         # Ground truth
-        u_true, v_true, _ = jax.vmap(
-            lambda x, y, t: analytical_taylor_green(x, y, t, nu)
-        )(x_test, y_test, t_test)
+        u_true, v_true, _ = jax.vmap(lambda x, y, t: analytical_taylor_green(x, y, t, nu))(
+            x_test, y_test, t_test
+        )
 
         # Relative error
         u_error = jnp.mean(jnp.abs(u_pred - u_true))

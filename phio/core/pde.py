@@ -70,6 +70,4 @@ class PDE(ABC):
         pass
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}(domain={self.domain}, time={self.time_domain})"
-        )
+        return f"{self.__class__.__name__}(domain={self.domain}, time={self.time_domain})"

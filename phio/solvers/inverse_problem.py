@@ -211,12 +211,8 @@ class InverseProblemSolver:
         t_min, t_max = self.t_range
 
         # Generate training data
-        x_pde = jax.random.uniform(
-            rng, shape=(n_collocation_points,), minval=x_min, maxval=x_max
-        )
-        t_pde = jax.random.uniform(
-            rng, shape=(n_collocation_points,), minval=t_min, maxval=t_max
-        )
+        x_pde = jax.random.uniform(rng, shape=(n_collocation_points,), minval=x_min, maxval=x_max)
+        t_pde = jax.random.uniform(rng, shape=(n_collocation_points,), minval=t_min, maxval=t_max)
 
         # Boundary conditions
         n_bc = 20
@@ -249,9 +245,7 @@ class InverseProblemSolver:
             learning_rate=1e-3,
             sample_input=(x_pde[:1, None], t_pde[:1, None]),
         )
-        physical_params = {
-            key: jnp.array(val) for key, val in initial_param_guess.items()
-        }
+        physical_params = {key: jnp.array(val) for key, val in initial_param_guess.items()}
 
         # Training history
         history = {
