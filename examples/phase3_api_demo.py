@@ -14,9 +14,9 @@ import requests
 
 def test_api_health():
     """Test API health endpoint."""
-    print("="*60)
+    print("=" * 60)
     print("Testing API Health")
-    print("="*60)
+    print("=" * 60)
 
     try:
         response = requests.get("http://localhost:8000/health", timeout=5)
@@ -34,9 +34,9 @@ def test_api_health():
 
 def test_prediction_api():
     """Test prediction endpoint."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Testing Prediction API")
-    print("="*60)
+    print("=" * 60)
 
     # Prepare request
     request_data = {
@@ -74,9 +74,9 @@ def test_prediction_api():
 
 def demo_data_loading():
     """Demo data loading pipeline."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Data Loading Demo")
-    print("="*60)
+    print("=" * 60)
 
     from phio.data import DataLoader, create_collocation_points
     import jax
@@ -118,9 +118,9 @@ def demo_data_loading():
 
 def demo_normalization():
     """Demo data normalization."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Data Normalization Demo")
-    print("="*60)
+    print("=" * 60)
 
     from phio.data import Normalizer
     import jax.numpy as jnp
@@ -142,9 +142,9 @@ def demo_normalization():
 
 def main():
     """Run all demos."""
-    print("\n" + "#"*60)
+    print("\n" + "#" * 60)
     print("# PHASE 3.2: END-TO-END PIPELINE DEMO")
-    print("#"*60)
+    print("#" * 60)
 
     print("\nThis demo showcases:")
     print("  1. FastAPI REST API")
@@ -157,9 +157,9 @@ def main():
     demo_normalization()
 
     # API demos (require server running)
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("API Demos (requires server running)")
-    print("="*60)
+    print("=" * 60)
     print("\nTo start the API server:")
     print("  uvicorn phio.api.app:create_app --factory --reload")
     print("\nOr with Docker:")
@@ -174,9 +174,9 @@ def main():
     test_api_health()
     test_prediction_api()
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMO COMPLETE")
-    print("="*60)
+    print("=" * 60)
     print("\nNext steps:")
     print("  1. Start API: uvicorn phio.api.app:create_app --factory")
     print("  2. Start Dashboard: streamlit run dashboard/app.py")

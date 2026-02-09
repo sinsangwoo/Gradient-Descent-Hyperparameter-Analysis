@@ -29,9 +29,7 @@ API_URL = os.getenv("API_URL", "http://localhost:8000")
 def main():
     """Main dashboard application."""
     st.title("🌊 PhIO: Physics-Informed Neural Networks")
-    st.markdown(
-        "Interactive dashboard for PINN training, inference, and visualization"
-    )
+    st.markdown("Interactive dashboard for PINN training, inference, and visualization")
 
     # Sidebar
     st.sidebar.title("Navigation")
@@ -78,14 +76,12 @@ def show_home():
 
     # Features
     st.subheader("Features")
-    st.markdown(
-        """
+    st.markdown("""
     - 🚀 **Fast Inference**: GPU-accelerated predictions
     - 📈 **Real-time Visualization**: Interactive plots
     - 🎯 **Validated Models**: Ghia benchmark verified
     - 🐳 **Docker Deployment**: One-command setup
-    """
-    )
+    """)
 
 
 def show_predictions():
@@ -188,14 +184,12 @@ def show_ns_prediction():
         st.subheader("Reynolds Number")
         reynolds = st.selectbox("Re", [100, 400, 1000])
 
-    st.markdown(
-        """
+    st.markdown("""
     **Preview Mode**: Streamlit 2D vector field visualization
     - Velocity magnitude contours
     - Streamlines
     - Pressure field
-    """
-    )
+    """)
 
 
 def show_validation():
@@ -213,12 +207,8 @@ def show_validation():
 
     with col1:
         fig = go.Figure()
-        fig.add_trace(
-            go.Bar(x=re_numbers, y=u_errors, name="U-velocity MAE")
-        )
-        fig.add_trace(
-            go.Bar(x=re_numbers, y=v_errors, name="V-velocity MAE")
-        )
+        fig.add_trace(go.Bar(x=re_numbers, y=u_errors, name="U-velocity MAE"))
+        fig.add_trace(go.Bar(x=re_numbers, y=v_errors, name="V-velocity MAE"))
         fig.update_layout(
             title="Validation Errors by Reynolds Number",
             xaxis_title="Reynolds Number",
@@ -274,9 +264,7 @@ def show_settings():
 
     st.subheader("Performance")
     cache_enabled = st.checkbox("Enable Caching", value=True)
-    max_points = st.number_input(
-        "Max Prediction Points", value=1000, step=100
-    )
+    max_points = st.number_input("Max Prediction Points", value=1000, step=100)
 
     if st.button("Save Settings"):
         st.success("✅ Settings saved!")

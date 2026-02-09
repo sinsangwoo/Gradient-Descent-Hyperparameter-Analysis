@@ -62,13 +62,9 @@ class Normalizer:
             raise ValueError("Normalizer not fitted. Call fit() first.")
 
         if self.method == "minmax":
-            return (data - self.params["min"]) / (
-                self.params["max"] - self.params["min"] + 1e-8
-            )
+            return (data - self.params["min"]) / (self.params["max"] - self.params["min"] + 1e-8)
         elif self.method == "standard":
-            return (data - self.params["mean"]) / (
-                self.params["std"] + 1e-8
-            )
+            return (data - self.params["mean"]) / (self.params["std"] + 1e-8)
 
     def fit_transform(self, data: jnp.ndarray) -> jnp.ndarray:
         """Fit and transform in one step.
@@ -94,9 +90,7 @@ class Normalizer:
             raise ValueError("Normalizer not fitted.")
 
         if self.method == "minmax":
-            return data * (
-                self.params["max"] - self.params["min"]
-            ) + self.params["min"]
+            return data * (self.params["max"] - self.params["min"]) + self.params["min"]
         elif self.method == "standard":
             return data * self.params["std"] + self.params["mean"]
 

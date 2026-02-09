@@ -19,9 +19,7 @@ class PredictionRequest(BaseModel):
     x: List[float] = Field(..., description="X coordinates")
     y: Optional[List[float]] = Field(None, description="Y coordinates")
     t: Optional[List[float]] = Field(None, description="Time coordinates")
-    model_name: str = Field(
-        "default", description="Model name to use for prediction"
-    )
+    model_name: str = Field("default", description="Model name to use for prediction")
 
     class Config:
         json_schema_extra = {
@@ -45,9 +43,7 @@ class PredictionResponse(BaseModel):
 class TrainingRequest(BaseModel):
     """Training request model."""
 
-    problem_type: str = Field(
-        ..., description="Problem type (heat, wave, navier-stokes)"
-    )
+    problem_type: str = Field(..., description="Problem type (heat, wave, navier-stokes)")
     domain: dict = Field(..., description="Spatial-temporal domain")
     n_epochs: int = Field(5000, description="Number of training epochs")
     learning_rate: float = Field(1e-3, description="Learning rate")

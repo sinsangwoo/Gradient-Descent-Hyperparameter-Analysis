@@ -56,8 +56,7 @@ class DataLoader:
 
         if format not in self.SUPPORTED_FORMATS:
             raise ValueError(
-                f"Unsupported format: {format}. "
-                f"Supported: {self.SUPPORTED_FORMATS}"
+                f"Unsupported format: {format}. " f"Supported: {self.SUPPORTED_FORMATS}"
             )
 
         # Load based on format
@@ -95,8 +94,7 @@ class DataLoader:
             np.savez(filepath, **{k: np.array(v) for k, v in data.items()})
         elif format == ".json":
             # Save metadata only
-            metadata = {k: {"shape": v.shape, "dtype": str(v.dtype)}
-                       for k, v in data.items()}
+            metadata = {k: {"shape": v.shape, "dtype": str(v.dtype)} for k, v in data.items()}
             with open(filepath, "w") as f:
                 json.dump(metadata, f, indent=2)
         else:
@@ -150,9 +148,7 @@ def load_hdf5(
     try:
         import h5py
     except ImportError:
-        raise ImportError(
-            "h5py required for HDF5 support. Install with: pip install h5py"
-        )
+        raise ImportError("h5py required for HDF5 support. Install with: pip install h5py")
 
     result = {}
     with h5py.File(filepath, "r") as f:
