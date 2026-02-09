@@ -10,6 +10,7 @@ This is the standard benchmark for validating CFD codes.
 
 from typing import Dict, Tuple
 
+import jax
 import jax.numpy as jnp
 
 
@@ -17,7 +18,8 @@ class GhiaCavityData:
     """Benchmark data for lid-driven cavity at various Reynolds numbers.
 
     Data extracted from Ghia et al. (1982) paper.
-    Provides u-velocity along vertical centerline and v-velocity along horizontal centerline.
+    Provides u-velocity along vertical centerline and v-velocity along
+    horizontal centerline.
     """
 
     # Reynolds number 100 data
