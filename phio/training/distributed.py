@@ -30,9 +30,9 @@ class DistributedTrainer:
         self.n_devices = jax.device_count()
         self.devices = jax.devices()
 
-        print("="*60)
+        print("=" * 60)
         print("DISTRIBUTED TRAINING SETUP")
-        print("="*60)
+        print("=" * 60)
         print(f"Number of devices: {self.n_devices}")
         print(f"Device type: {self.devices[0].device_kind}")
 
@@ -45,7 +45,7 @@ class DistributedTrainer:
         else:
             print(f"\nData parallelism enabled across {self.n_devices} devices")
 
-        print("="*60)
+        print("=" * 60)
 
     def replicate_state(self, state: Any) -> Any:
         """Replicate state across all devices.
@@ -76,9 +76,7 @@ class DistributedTrainer:
         # Reshape to (n_devices, -1, ...)
         return jnp.reshape(batch, (self.n_devices, -1) + batch.shape[1:])
 
-    def create_pmap_step(
-        self, step_fn: Callable
-    ) -> Callable:
+    def create_pmap_step(self, step_fn: Callable) -> Callable:
         """Create pmapped training step.
 
         Args:
@@ -96,9 +94,7 @@ class DistributedTrainer:
 
         return pmap_step
 
-    def synchronize_gradients(
-        self, grads: Any
-    ) -> Any:
+    def synchronize_gradients(self, grads: Any) -> Any:
         """Average gradients across devices.
 
         Args:
@@ -112,9 +108,7 @@ class DistributedTrainer:
 
         return jax.lax.pmean(grads, axis_name="batch")
 
-    def gather_metrics(
-        self, metrics: jnp.ndarray
-    ) -> float:
+    def gather_metrics(self, metrics: jnp.ndarray) -> float:
         """Gather and average metrics from all devices.
 
         Args:
@@ -149,7 +143,7 @@ def print_device_info():
     devices = jax.devices()
 
     print("\nJAX Device Information:")
-    print("="*60)
+    print("=" * 60)
     print(f"Total devices: {n_devices}")
     print(f"Default backend: {jax.default_backend()}")
 
@@ -165,4 +159,4 @@ def print_device_info():
         print(f"\nEstimated training speedup: {speedup:.1f}x")
         print(f"(assuming {0.85*100:.0f}% parallel efficiency)")
 
-    print("="*60)
+    print("=" * 60)

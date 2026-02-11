@@ -10,9 +10,7 @@ class TestEarlyStoppingCallback:
 
     def test_early_stopping_triggered(self):
         """Test that early stopping triggers."""
-        callback = EarlyStoppingCallback(
-            monitor="loss", patience=3, min_delta=0.001, mode="min"
-        )
+        callback = EarlyStoppingCallback(monitor="loss", patience=3, min_delta=0.001, mode="min")
 
         callback.on_train_begin()
 
@@ -26,9 +24,7 @@ class TestEarlyStoppingCallback:
 
     def test_improvement_resets_patience(self):
         """Test that improvement resets patience."""
-        callback = EarlyStoppingCallback(
-            monitor="loss", patience=3, min_delta=0.001, mode="min"
-        )
+        callback = EarlyStoppingCallback(monitor="loss", patience=3, min_delta=0.001, mode="min")
 
         callback.on_train_begin()
 
@@ -42,9 +38,7 @@ class TestEarlyStoppingCallback:
 
     def test_mode_max(self):
         """Test max mode (higher is better)."""
-        callback = EarlyStoppingCallback(
-            monitor="accuracy", patience=3, mode="max"
-        )
+        callback = EarlyStoppingCallback(monitor="accuracy", patience=3, mode="max")
 
         callback.on_train_begin()
 
@@ -65,7 +59,7 @@ class TestLearningRateScheduler:
 
         def schedule(epoch):
             called_epochs.append(epoch)
-            return 1e-3 * (0.9 ** epoch)
+            return 1e-3 * (0.9**epoch)
 
         callback = LearningRateScheduler(schedule, verbose=False)
 
@@ -76,8 +70,9 @@ class TestLearningRateScheduler:
 
     def test_exponential_decay(self):
         """Test exponential decay schedule."""
+
         def schedule(epoch):
-            return 1e-3 * (0.9 ** epoch)
+            return 1e-3 * (0.9**epoch)
 
         callback = LearningRateScheduler(schedule, verbose=False)
 
@@ -86,7 +81,7 @@ class TestLearningRateScheduler:
 
         assert lr_0 == 1e-3
         assert lr_10 < lr_0
-        assert lr_10 == pytest.approx(1e-3 * (0.9 ** 10))
+        assert lr_10 == pytest.approx(1e-3 * (0.9**10))
 
 
 if __name__ == "__main__":

@@ -35,9 +35,7 @@ class TestCheckpointManager:
         """Test max checkpoint limit."""
         manager = CheckpointManager(str(tmp_path), max_to_keep=3)
 
-        state = SimpleNamespace(
-            params={"w": jnp.array([1.0])}, opt_state={}
-        )
+        state = SimpleNamespace(params={"w": jnp.array([1.0])}, opt_state={})
 
         # Save 5 checkpoints
         for epoch in [10, 20, 30, 40, 50]:
@@ -49,13 +47,9 @@ class TestCheckpointManager:
 
     def test_best_checkpoint(self, tmp_path):
         """Test best checkpoint selection."""
-        manager = CheckpointManager(
-            str(tmp_path), max_to_keep=5, keep_best=True
-        )
+        manager = CheckpointManager(str(tmp_path), max_to_keep=5, keep_best=True)
 
-        state = SimpleNamespace(
-            params={"w": jnp.array([1.0])}, opt_state={}
-        )
+        state = SimpleNamespace(params={"w": jnp.array([1.0])}, opt_state={})
 
         # Save with different losses
         losses = {100: 1.0, 200: 0.5, 300: 0.3, 400: 0.6, 500: 0.4}

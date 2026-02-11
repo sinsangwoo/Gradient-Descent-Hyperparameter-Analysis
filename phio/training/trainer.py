@@ -135,9 +135,7 @@ class AdvancedTrainer:
                     callback.on_epoch_end(epoch, logs)
 
                 # Check early stopping
-                should_stop = any(
-                    getattr(cb, "should_stop", False) for cb in self.callbacks
-                )
+                should_stop = any(getattr(cb, "should_stop", False) for cb in self.callbacks)
                 if should_stop:
                     print(f"\nTraining stopped early at epoch {epoch+1}")
                     break
@@ -173,9 +171,7 @@ class AdvancedTrainer:
         (loss, _), grads = grad_fn(self.state.params)
 
         # Update parameters
-        updates, opt_state = self.state.tx.update(
-            grads, self.state.opt_state, self.state.params
-        )
+        updates, opt_state = self.state.tx.update(grads, self.state.opt_state, self.state.params)
         params = jax.tree_map(lambda p, u: p + u, self.state.params, updates)
 
         # Update state
@@ -206,9 +202,7 @@ class AdvancedTrainer:
             grads = jax.lax.pmean(grads, axis_name="batch")
 
             # Update parameters
-            updates, opt_state = state.tx.update(
-                grads, state.opt_state, state.params
-            )
+            updates, opt_state = state.tx.update(grads, state.opt_state, state.params)
             params = jax.tree_map(lambda p, u: p + u, state.params, updates)
 
             return (

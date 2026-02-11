@@ -38,9 +38,9 @@ class SimpleNetwork(nn.Module):
 
 def demo_checkpointing():
     """Demo checkpoint save/restore."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMO 1: CHECKPOINTING")
-    print("="*60)
+    print("=" * 60)
 
     # Create checkpoint manager
     manager = CheckpointManager(
@@ -79,9 +79,9 @@ def demo_checkpointing():
 
 def demo_early_stopping():
     """Demo early stopping callback."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMO 2: EARLY STOPPING")
-    print("="*60)
+    print("=" * 60)
 
     # Create early stopping callback
     callback = EarlyStoppingCallback(
@@ -103,9 +103,21 @@ def demo_early_stopping():
 
     # Improving then plateauing losses
     losses = [
-        1.0, 0.5, 0.3, 0.2, 0.15,  # Improving
-        0.14, 0.141, 0.140, 0.139, 0.138,  # Slow improvement
-        0.138, 0.139, 0.138, 0.139, 0.138,  # Plateau
+        1.0,
+        0.5,
+        0.3,
+        0.2,
+        0.15,  # Improving
+        0.14,
+        0.141,
+        0.140,
+        0.139,
+        0.138,  # Slow improvement
+        0.138,
+        0.139,
+        0.138,
+        0.139,
+        0.138,  # Plateau
     ]
 
     for epoch, loss in enumerate(losses):
@@ -119,13 +131,13 @@ def demo_early_stopping():
 
 def demo_learning_rate_schedule():
     """Demo learning rate scheduling."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMO 3: LEARNING RATE SCHEDULING")
-    print("="*60)
+    print("=" * 60)
 
     # Exponential decay schedule
     def schedule(epoch):
-        return 1e-3 * (0.95 ** epoch)
+        return 1e-3 * (0.95**epoch)
 
     callback = LearningRateScheduler(schedule, verbose=True)
 
@@ -141,9 +153,9 @@ def demo_learning_rate_schedule():
 
 def demo_multi_gpu():
     """Demo multi-GPU detection and setup."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMO 4: MULTI-GPU SUPPORT")
-    print("="*60)
+    print("=" * 60)
 
     # Print device info
     print_device_info()
@@ -168,9 +180,9 @@ def demo_multi_gpu():
 
 def demo_tensorboard():
     """Demo TensorBoard logging."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMO 5: TENSORBOARD LOGGING")
-    print("="*60)
+    print("=" * 60)
 
     # Create TensorBoard callback
     callback = TensorBoardCallback(log_dir="demo_logs")
@@ -202,9 +214,9 @@ def demo_tensorboard():
 
 def demo_complete_workflow():
     """Demo complete training workflow with all features."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DEMO 6: COMPLETE WORKFLOW")
-    print("="*60)
+    print("=" * 60)
 
     print("\nTraining workflow with:")
     print("  ✓ Checkpointing (every 100 epochs)")
@@ -218,7 +230,7 @@ def demo_complete_workflow():
     callbacks = [
         CheckpointCallback(checkpoint_mgr, save_freq=100),
         EarlyStoppingCallback(monitor="loss", patience=10, verbose=False),
-        LearningRateScheduler(lambda e: 1e-3 * (0.95 ** e), verbose=False),
+        LearningRateScheduler(lambda e: 1e-3 * (0.95**e), verbose=False),
         TensorBoardCallback("workflow_logs"),
     ]
 
@@ -230,9 +242,9 @@ def demo_complete_workflow():
 
 def main():
     """Run all demos."""
-    print("\n" + "#"*60)
+    print("\n" + "#" * 60)
     print("# PHASE 3.3: ADVANCED TRAINING FEATURES")
-    print("#"*60)
+    print("#" * 60)
 
     print("\nDemonstrating:")
     print("  1. Checkpointing")
@@ -249,9 +261,9 @@ def main():
     demo_tensorboard()
     demo_complete_workflow()
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("ALL DEMOS COMPLETE")
-    print("="*60)
+    print("=" * 60)
 
     print("\nKey Features:")
     print("  ✅ Automatic checkpointing")

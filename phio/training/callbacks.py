@@ -94,9 +94,7 @@ class EarlyStoppingCallback(Callback):
             self.best_value = current
             self.wait = 0
             if self.verbose:
-                print(
-                    f"Epoch {epoch}: {self.monitor} improved to {current:.6f}"
-                )
+                print(f"Epoch {epoch}: {self.monitor} improved to {current:.6f}")
         else:
             self.wait += 1
             if self.verbose:
@@ -236,10 +234,7 @@ class TensorBoardCallback(Callback):
             self.writer = SummaryWriter(str(self.log_dir))
             self.enabled = True
         except ImportError:
-            print(
-                "TensorBoard not available. "
-                "Install with: pip install tensorboard"
-            )
+            print("TensorBoard not available. " "Install with: pip install tensorboard")
             self.enabled = False
 
     def on_epoch_end(self, epoch: int, logs: Optional[Dict] = None):
