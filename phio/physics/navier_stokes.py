@@ -27,54 +27,79 @@ def ns_residual_2d(
 ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
     """Compute Navier-Stokes residual for 2D incompressible flow.
 
+    Uses JAX automatic differentiation with jacrev for efficient batch computation.
+
     Args:
         u_fn: Neural network function(params, x, y, t) -> [u, v, p]
         params: Network parameters
-        x: Spatial coordinate (horizontal)
-        y: Spatial coordinate (vertical)
-        t: Time coordinate
+        x: Spatial coordinate (horizontal), shape (N,)
+        y: Spatial coordinate (vertical), shape (N,)
+        t: Time coordinate, shape (N,)
         nu: Kinematic viscosity
 
     Returns:
-        r_u: Residual of x-momentum equation
-        r_v: Residual of y-momentum equation
-        r_cont: Residual of continuity equation
+        r_u: Residual of x-momentum equation, shape (N,)
+        r_v: Residual of y-momentum equation, shape (N,)
+        r_cont: Residual of continuity equation, shape (N,)
     """
 
-    def network_output(x_val, y_val, t_val):
-        """Evaluate network at a point."""
-        output = u_fn(params, x_val, y_val, t_val)
-        return output[0], output[1], output[2]  # u, v, p
+    def net_fn(coords):
+        """Network wrapper for differentiation.
+        
+        Args:
+            coords: [x, y, t] coordinates
+            
+        Returns:
+            [u, v, p] output
+        """
+        return u_fn(params, coords[0], coords[1], coords[2])
 
-    # First derivatives
-    u, v, p = network_output(x, y, t)
+    # Jacobian function: computes first derivatives
+    # Output shape: [3, 3] for [u, v, p] w.r.t [x, y, t]
+    jac_fn = jax.jacrev(net_fn)
 
-    # Velocity gradients
-    u_x = jax.grad(lambda x_: network_output(x_, y, t)[0])(x)
-    u_y = jax.grad(lambda y_: network_output(x, y_, t)[0])(y)
-    u_t = jax.grad(lambda t_: network_output(x, y, t_)[0])(t)
+    # Hessian functions: computes second derivatives
+    hess_u_fn = jax.jacrev(lambda c: jac_fn(c)[0, :])  # u derivatives
+    hess_v_fn = jax.jacrev(lambda c: jac_fn(c)[1, :])  # v derivatives
 
-    v_x = jax.grad(lambda x_: network_output(x_, y, t)[1])(x)
-    v_y = jax.grad(lambda y_: network_output(x, y_, t)[1])(y)
-    v_t = jax.grad(lambda t_: network_output(x, y, t_)[1])(t)
+    def single_point_residual(coords):
+        """Compute residual at a single collocation point.
+        
+        Args:
+            coords: [x, y, t] for single point
+            
+        Returns:
+            (res_u, res_v, res_c): Residuals for momentum and continuity
+        """
+        # Network output
+        out = net_fn(coords)
+        u, v, p = out[0], out[1], out[2]
 
-    # Pressure gradients
-    p_x = jax.grad(lambda x_: network_output(x_, y, t)[2])(x)
-    p_y = jax.grad(lambda y_: network_output(x, y_, t)[2])(y)
+        # First derivatives via Jacobian
+        # jac = [[u_x, u_y, u_t],
+        #        [v_x, v_y, v_t],
+        #        [p_x, p_y, p_t]]
+        jac = jac_fn(coords)
+        u_x, u_y, u_t = jac[0, 0], jac[0, 1], jac[0, 2]
+        v_x, v_y, v_t = jac[1, 0], jac[1, 1], jac[1, 2]
+        p_x, p_y = jac[2, 0], jac[2, 1]
 
-    # Second derivatives (Laplacian terms)
-    u_xx = jax.grad(jax.grad(lambda x_: network_output(x_, y, t)[0]))(x)
-    u_yy = jax.grad(jax.grad(lambda y_: network_output(x, y_, t)[0]))(y)
+        # Second derivatives via Hessian
+        u_xx = hess_u_fn(coords)[0, 0]
+        u_yy = hess_u_fn(coords)[1, 1]
+        v_xx = hess_v_fn(coords)[0, 0]
+        v_yy = hess_v_fn(coords)[1, 1]
 
-    v_xx = jax.grad(jax.grad(lambda x_: network_output(x_, y, t)[1]))(x)
-    v_yy = jax.grad(jax.grad(lambda y_: network_output(x, y_, t)[1]))(y)
+        # Navier-Stokes residuals
+        res_u = u_t + u * u_x + v * u_y + p_x - nu * (u_xx + u_yy)
+        res_v = v_t + u * v_x + v * v_y + p_y - nu * (v_xx + v_yy)
+        res_c = u_x + v_y  # Continuity
 
-    # Momentum equations
-    r_u = u_t + u * u_x + v * u_y + p_x - nu * (u_xx + u_yy)
-    r_v = v_t + u * v_x + v * v_y + p_y - nu * (v_xx + v_yy)
+        return res_u, res_v, res_c
 
-    # Continuity equation (incompressibility)
-    r_cont = u_x + v_y
+    # Vectorize over batch using vmap
+    coords_batch = jnp.stack([x, y, t], axis=-1)  # Shape: (N, 3)
+    r_u, r_v, r_cont = jax.vmap(single_point_residual)(coords_batch)
 
     return r_u, r_v, r_cont
 
